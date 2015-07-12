@@ -1,0 +1,23 @@
+{
+    "name": "awful-tokens",
+    "description": "Authtoken Server",
+    "version": "0.1.0",
+    "private": true,
+    "author": "FHV",
+    "scrypt": "latest",
+    "dependencies": {
+		"body-parser": "latest",
+        "express": "latest",
+		"node-redis": "latest",
+        "node-schedule": "latest",
+		"tweetnacl": "latest",
+		"blake2s-js": "latest"
+    },
+    "devDependencies": {
+        "request": "latest",
+        "jasmine-node": "latest"
+    },
+    "engines": {
+        "node": "0.10.x"
+    }
+}
