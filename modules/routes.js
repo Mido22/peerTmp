@@ -46,7 +46,7 @@ function Router(express){
       });
   });	
 
-
+  return router;
 }
 
 module.exports = Router;
