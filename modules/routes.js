@@ -35,17 +35,18 @@ function Router(express){
 	router.post('/tokens/:token', function(req, res) {
     	decryptedToken = req.params.token;  
     	publicKey = req.body.publicKey;
-
-      db.get(decryptedToken, function(err, val) {
-      	if (val && val.toString() === publicKey) {
-      		res.status(200).json({ status: 'ok' });
-      	} else {
-      		res.status(500).json({ error: 'error' });
-      	}
-      	db.del(decryptedToken);
+      db.get(decryptedToken).then(function(val){
+        if (val && val.toString() === publicKey) {
+          res.status(200).json({ status: 'ok' });
+          db.del(decryptedToken);
+        } else {
+          res.status(500).json({ error: 'error' });
+        }
+      }).catch(function(err){
+        res.status(500).json({ error: 'error' });
       });
   });	
-
+  
   return router;
 }
 

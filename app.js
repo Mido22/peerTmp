@@ -7,6 +7,10 @@ var express = require('express'),
   path = require('path'),
   router = require(path.join(__dirname, 'modules', 'routes'))(express);
 
+// checking if Proise is found, uses the global shim.
+require('es6-promise').polyfill();
+
+
 app.listen(port);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

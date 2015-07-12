@@ -18,7 +18,7 @@ function encryptToken(token, userPublicKeyString) {
 		nonce,
 		userBytes.subarray(0, 32),
 		serverEphemeralSecret
-	)
+	);
 	return {
 		token: nacl.util.encodeBase64(encrypted_token),
 		nonce: nacl.util.encodeBase64(nonce),
@@ -27,12 +27,11 @@ function encryptToken(token, userPublicKeyString) {
 }
 
 function generateToken() {
-	var token = new Uint8Array(32)
-
-	token[0] = 0x41
-	token[1] = 0x54
-	token.set(nacl.randomBytes(30), 2)
-	return nacl.util.encodeBase64(token)
+	var token = new Uint8Array(32);
+	token[0] = 0x41;
+	token[1] = 0x54;
+	token.set(nacl.randomBytes(30), 2);
+	return nacl.util.encodeBase64(token);
 }
 
 
