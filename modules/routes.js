@@ -4,48 +4,33 @@ var path = require('path'),
 
 function Router(express){
 
-	var router = express.Router(); 
+  var router = express.Router(); 
 
-	// track
-	router.use(function(req, res, next) {
-	    if (req.params.publicKey) {
-	    	db.incrKey(publicKey)
-	    }
-	    next(); 
-	});
-
-	router.get('/generate/:publicKey', function(req, res) {
-		var publicKey = req.params.publicKey,
-			tokens = [], 
-			encryptedTokens = [];
-
-		for (var i=0; i<10; i++) {
-			var token = security.generateToken();
-			tokens.push(token);
-			db.set(token, publicKey);
-			encryptedTokens.push(security.encryptToken(token, publicKey));
-		}
-		res.status(200).json({ 
-			tokens: encryptedTokens
-		});
-	});
-
-
-	// check validity of a token
-	router.post('/tokens/:token', function(req, res) {
-    	decryptedToken = req.params.token;  
-    	publicKey = req.body.publicKey;
-      db.get(decryptedToken).then(function(val){
-        if (val && val.toString() === publicKey) {
-          res.status(200).json({ status: 'ok' });
-          db.del(decryptedToken);
-        } else {
-          res.status(500).json({ error: 'error' });
-        }
+  router.get('/generate/:publicKey', function(req, res) {
+    security.generatesTokens(req.params.publicKey, 10)
+      .then(function(encryptedTokens){        
+        res.status(200).json({ 
+          tokens: encryptedTokens
+        }); 
       }).catch(function(err){
         res.status(500).json({ error: 'error' });
       });
-  });	
+  });
+
+
+  // check validity of a token
+  router.post('/tokens/:token', function(req, res) {
+      security.checkToken(req.body.publicKey, req.params.token)
+        .then(function(bool){
+          if (bool) {
+            res.status(200).json({ status: 'ok' });
+          } else {
+            res.status(500).json({ error: 'error' });
+          }
+        }).catch(function(err){
+          res.status(500).json({ error: 'error' });
+        });
+  });  
   
   return router;
 }
