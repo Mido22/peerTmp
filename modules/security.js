@@ -49,9 +49,8 @@ function generateToken() {
 }
 
 function generatesTokens(pk, count){
-  if(!pk){
-    return Promise.reject(new Error('Public Key Missing'));
-  }
+  if(!pk)  return Promise.reject(new Error('Public Key Missing'));
+  
   var user = CONST.prepend + pk,    
     activeTokenCount,
     tokens = [], 
@@ -66,7 +65,7 @@ function generatesTokens(pk, count){
   }).then(function(){
     var i =0;
     var promises = [];
-    while(activeTokenCount + i <=  activeTokensLimit && i < count){
+    while(activeTokenCount + i <  activeTokensLimit && i < count){
       i++;
       var promise = addToken(pk).then(function(encryptedToken){
           encryptedTokens.push(encryptedToken);
@@ -141,6 +140,9 @@ function clearUsers(users){
 }
 
 function checkToken(user, key){
+
+	if(!user || !key)	return Promise.resolve(false);
+
   var publicKey, redUser = CONST.prepend + user, bool;
   return db.key.get(key).then(function(pk){
     publicKey = pk;

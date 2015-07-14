@@ -47,13 +47,17 @@ function setGetSize(setName){
   return redis.scard(setName);
 }
 
+function setClear(setName){
+  return redis.del(setName);
+}
 
 var set = {
   add: setAdd,
   del: setRemove,
   exists: setExists,
   get: setGetAll,
-  size: setGetSize
+  size: setGetSize, 
+  clear: setClear
 };
 
 

@@ -1,13 +1,16 @@
 var path = require('path'), 
-  security = require(path.join('..', 'modules', 'security')); 
+  security = require(path.join('..', 'modules', 'security')),
+  tokenGenCount = 10; 
 
 function Router(express){
 
   var router = express.Router(); 
 
   router.get('/generate/:publicKey', function(req, res) {
-    security.generatesTokens(req.params.publicKey, 10)
+    security.generatesTokens(req.params.publicKey, tokenGenCount)
       .then(function(encryptedTokens){    
+        if(!encryptedTokens || !encryptedTokens.length) throw new Error('No Tokens Generated.');
+
         res.status(200).json({ 
           tokens: encryptedTokens
         }); 
@@ -24,7 +27,7 @@ function Router(express){
           if (bool) {
             res.status(200).json({ status: 'ok' });
           } else {
-            res.status(500).json({ error: 'error' });
+            throw new Error('Invalid Token Pair');
           }
         }).catch(function(err){
           res.status(500).json({ error: 'error' });
