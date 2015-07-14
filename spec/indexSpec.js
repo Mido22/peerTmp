@@ -2,7 +2,6 @@
 // checking if Proise is found, uses the global shim.
 require('es6-promise').polyfill();
 
-
 var request = require('request'),
   path = require('path'),
   crypto = require(path.join(__dirname, '..', 'lib', 'peerio_crypto_mod')),
@@ -33,7 +32,7 @@ describe("Generating tokens", function() {
 	afterEach(function(done){
 		clearSet(myPublicKeyString).then(function(){
 			myKeyPair = myPublicKeyString =  null;
-    }).then(done.bind(null, null), done);
+    }).catch(fail).then(done);
 	});
 
   it("should respond with 10 encrypted tokens", function(done) {
@@ -43,8 +42,8 @@ describe("Generating tokens", function() {
       var tokens = JSON.parse(response.body).tokens; 
       expect(response.statusCode).toEqual(200);
       expect(tokens.length).toEqual(10);
-      return clearTokens(tokens, myPublicKeyString);
-    }).then(done.bind(null, null), done);
+      return clearTokens(tokens, myPublicKeyString, myKeyPair);
+    }).catch(fail).then(done);
   });
 
   it("should respond with error when max amount of active tokens for that user reached", function(done) {
@@ -54,7 +53,7 @@ describe("Generating tokens", function() {
     	return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       expect(response.statusCode).toEqual(500);
-    }).then(done.bind(null, null), done);
+    }).catch(fail).then(done);
   });
 
 
@@ -73,8 +72,8 @@ describe("Generating tokens", function() {
     	return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       expect(response.statusCode).toEqual(500);
-      return clearTokens(tokens, myPublicKeyString);
-    }).then(done.bind(null, null), done);
+      return clearTokens(tokens, myPublicKeyString, myKeyPair);
+    }).catch(fail).then(done);
   });
 
 
@@ -94,12 +93,8 @@ describe("Generating tokens", function() {
     	return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       expect(response.statusCode).toEqual(500);
-      console.log('toknes length: ', token.length);
-      return clearTokens(tokens, myPublicKeyString);
+      return clearTokens(tokens, myPublicKeyString, myKeyPair);
   	}).then(function(){
-      return db.set.size('auth:'+myPublicKeyString);
-  	}).then(function(size){
-  		console.log('size: ', size);
     	return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       tokens = JSON.parse(response.body).tokens; 
@@ -108,8 +103,8 @@ describe("Generating tokens", function() {
     	return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       expect(response.statusCode).toEqual(500);
-      return clearTokens(tokens, myPublicKeyString);
-    }).then(done.bind(null, null), done);
+      return clearTokens(tokens, myPublicKeyString, myKeyPair);
+    }).catch(fail).then(done);
   });
 
 });
@@ -134,7 +129,7 @@ describe("Validating tokens", function() {
 			return clearTokensIgnoreError(tokens);
 		}).then(function(){
 			myKeyPair = myPublicKeyString = tokens =  null;
-    }).then(done.bind(null, null), done);
+    }).catch(fail).then(done);
 	});
 
   it("should return an error for an unknown token", function(done) {
@@ -143,7 +138,7 @@ describe("Validating tokens", function() {
     .then(function(response){
       expect(response.statusCode).toEqual(500);
 
-    }).then(done.bind(null, null), done);
+    }).catch(fail).then(done);
   });
 
   it("should return an error for an unknown token and correct user", function(done) {
@@ -152,17 +147,16 @@ describe("Validating tokens", function() {
     .then(function(response){
       expect(response.statusCode).toEqual(500);
 
-    }).then(done.bind(null, null), done);  
+    }).catch(fail).then(done);
   });
 
   it("should return an error for a known token and incorrect user", function(done) {
-
     var validDecryptedToken = crypto.decryptToken(tokens[0], myKeyPair);
     pRequest(formURL('token', validDecryptedToken, dummyPublicKey))
     .then(function(response){
       expect(response.statusCode).toEqual(500);
 
-    }).then(done.bind(null, null), done);
+    }).catch(fail).then(done);
   });
 
   it("should return ok when token and user are valid and are correct pair", function(done) {
@@ -172,7 +166,7 @@ describe("Validating tokens", function() {
     .then(function(response){
       expect(response.statusCode).toEqual(200);
 
-    }).then(done.bind(null, null), done);  
+    }).catch(fail).then(done);
   });
 
   it("should return error when same token, user pair is used second time", function(done) {
@@ -188,7 +182,7 @@ describe("Validating tokens", function() {
     }).then(function(response){
       expect(response.statusCode).toEqual(500);
 
-    }).then(done.bind(null, null), done);  
+    }).catch(fail).then(done);
   });
 
   it("should return ok if token was used in invalid pair previously but used with called with correct pair for the first time", function(done) {
@@ -204,7 +198,7 @@ describe("Validating tokens", function() {
     }).then(function(response){
       expect(response.statusCode).toEqual(500);
 
-    }).then(done.bind(null, null), done);  
+    }).catch(fail).then(done);
   });
 
 });
@@ -255,16 +249,17 @@ function clearSet(pk){
 }
 
 // for clearing active tokens
-function clearTokens(tokens, pk){
-	if(!tokens || tokens.length)	return Promise.resolve();
+function clearTokens(tokens, pk, keyPair){
+	if(!tokens || !tokens.length)	return Promise.resolve();
+
 	var user = CONST.prepend + pk;
+  tokens = tokens.map(function(token){
+  	return crypto.decryptToken(token, keyPair);
+  });
 
 	var promises  = tokens.map(function(token){
 			return db.set.del(user, token).then(function(bool){
 				if(!bool)	throw new Error('Inactive key');
-				return db.set.size(user);
-			}).then(function(size){
-				console.log('size: ', size);
 				return db.key.del(token);
 			}).then(function(bool){
 				if(!bool)	throw new Error('Inactive key');
@@ -278,6 +273,6 @@ function clearTokens(tokens, pk){
 
 // for clearing active tokens as keys, leaves the values in set( "auth:<public key>"") as it is
 function clearTokensIgnoreError(tokens){
-	if(!tokens || tokens.length)	return Promise.resolve();
+	if(!tokens || !tokens.length)	return Promise.resolve();
 	return Promise.all(tokens.map(db.key.del));
 }
