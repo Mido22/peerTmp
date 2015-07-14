@@ -6,18 +6,18 @@ var schedule = require('node-schedule'),
   nacl = require('tweetnacl/nacl-fast'),
   keys = {},
   keyPair = nacl.box.keyPair(),
-  activeTokensLimit = 1024,			// limit of max number of active tokens per user
-  defaultTokenGenCount = 10,		// default no. of tokens to be generated when count is not specified
+  activeTokensLimit = 1024,      // limit of max number of active tokens per user
+  defaultTokenGenCount = 10,    // default no. of tokens to be generated when count is not specified
   watchListEntryLength = 900,    // unused token count for user to be added to watch list
   watchListExitLength = 600,    // unused token count for user to be removed from watch list
   keyExpiryTime = 15*60*1000,    // time before authentication token key expires
-  cleanUpInterval = 1*60*60*1000;	// time before checking and removing 
+  cleanUpInterval = 1*60*60*1000;  // time before checking and removing 
 
 // set names in redis database, 
 var CONST = {
   watchList: 'watchList',    // list of users who are about to be temporarily blocked.
   userList: 'userList',      // set containing all the users who has made request in past 24 hours
-  prepend: 'auth:'					 // string prepended to publicKey before it is used as key in redis db
+  prepend: 'auth:'           // string prepended to publicKey before it is used as key in redis db
 }
 
 keys.public = crypto.getPublicKeyString(keyPair.publicKey);
@@ -49,49 +49,49 @@ function generateToken() {
 }
 
 function generatesTokens(pk, count){
-	if(!pk){
-		return Promise.reject(new Error('Public Key Missing'));
-	}
-	var user = CONST.prepend + pk,		
-		activeTokenCount,
+  if(!pk){
+    return Promise.reject(new Error('Public Key Missing'));
+  }
+  var user = CONST.prepend + pk,    
+    activeTokenCount,
     tokens = [], 
     encryptedTokens = [];
   count = count || defaultTokenGenCount;
 
-	var promise =  db.set.size(user).then(function(size){
-		activeTokenCount = size;
-		if(activeTokenCount > watchListEntryLength){
-			return db.set.add(CONST.watchList, user)
-		}
-	}).then(function(){
-		var i =0;
-		while(activeTokenCount + i <=  activeTokensLimit && i < count){
-			i++;
-      promise = promise.then(addToken.bind(null, pk))
-      	.then(function(encryptedToken){
-      		encryptedTokens.push(encryptedToken);
+  return db.set.size(user).then(function(size){
+    activeTokenCount = size;
+    if(activeTokenCount > watchListEntryLength){
+      return db.set.add(CONST.watchList, user)
+    }
+  }).then(function(){
+    var i =0;
+    var promises = [];
+    while(activeTokenCount + i <=  activeTokensLimit && i < count){
+      i++;
+      var promise = addToken(pk).then(function(encryptedToken){
+          encryptedTokens.push(encryptedToken);
       });
-		}
-		promise = promise.then(function(){
-			return encryptedTokens;
-		});
-	});
-	return promise;
+      promises.push(promise);
+    }
+    return Promise.all(promises);
+  }).then(function(){
+    return encryptedTokens;
+  });
 }
 
 function addToken(pk){
-	var user = CONST.prepend + pk,
-	  token = generateToken();
+  var user = CONST.prepend + pk,
+    token = generateToken();
 
-	return db.set.add(CONST.userList, user).then(function(){
-		return db.set.add(user, token);
-	}).then(function(){
-		return db.key.set(token, pk);
-	}).then(function(){
-		return db.key.expire(token, keyExpiryTime);
-	}).then(function(){
-		return encryptToken(token, pk);
-	});
+  return db.set.add(CONST.userList, user).then(function(){
+    return db.set.add(user, token);
+  }).then(function(){
+    return db.key.set(token, pk);
+  }).then(function(){
+    return db.key.expire(token, keyExpiryTime);
+  }).then(function(){
+    return encryptToken(token, pk);
+  });
 }
 
 function removeExpiredToken(user, key){
@@ -117,7 +117,7 @@ function removeExpiredTokens(user){
   }).then(function(){
     return db.set.size(user);
   }).then(function(size){
-  	newCount = size;
+    newCount = size;
     if(tokenCount > watchListEntryLength){      
       if(size < watchListExitLength){
         return db.set.del(CONST.watchList, user);
@@ -141,15 +141,15 @@ function clearUsers(users){
 }
 
 function checkToken(user, key){
-	var publicKey, redUser = CONST.prepend + user;
-	return db.key.get(key).then(function(pk){
-		publicKey = pk;
-		return db.key.del(key);
-	}).then(function(){
-		return db.set.del(redUser, key);
-	}).then(function(){
-		return user === publicKey;
-	});
+  var publicKey, redUser = CONST.prepend + user;
+  return db.key.get(key).then(function(pk){
+    publicKey = pk;
+    return db.key.del(key);
+  }).then(function(){
+    return db.set.del(redUser, key);
+  }).then(function(){
+    return user === publicKey;
+  });
 
 }
 

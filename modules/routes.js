@@ -1,5 +1,4 @@
-var path = require('path'),
-  db = require(path.join('..', 'modules', 'database')),  
+var path = require('path'), 
   security = require(path.join('..', 'modules', 'security')); 
 
 function Router(express){
@@ -8,7 +7,7 @@ function Router(express){
 
   router.get('/generate/:publicKey', function(req, res) {
     security.generatesTokens(req.params.publicKey, 10)
-      .then(function(encryptedTokens){        
+      .then(function(encryptedTokens){    
         res.status(200).json({ 
           tokens: encryptedTokens
         }); 
@@ -20,7 +19,8 @@ function Router(express){
 
   // check validity of a token
   router.post('/tokens/:token', function(req, res) {
-      security.checkToken(req.body.publicKey, req.params.token)
+      var token  = decodeURIComponent(req.params.token);
+      security.checkToken(req.body.publicKey, token)
         .then(function(bool){
           if (bool) {
             res.status(200).json({ status: 'ok' });
