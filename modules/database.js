@@ -1,8 +1,18 @@
-//var redis = require('then-redis').createClient(),
-var redis = require('then-redis').createClient({host: '13.198.103.81', password:'WebRTC_Redis_Password'}),
+/**
+ * @module database
+ * @desc currently, it is connected to redis database, later based on design change, this can be made to point at any desired database and no other modules needs to be changed.
+ */
+
+var redis = require('then-redis').createClient(),
   path = require('path')
   ;  
 
+/**
+ * @func 
+ * @alias module:database.key.get
+ * @desc for retriving value for the given key.
+ * @returns {Promise} - A promise resolving to .
+ */
 function keyGet(key){
   return redis.get(key);
 }
@@ -51,6 +61,10 @@ function setClear(setName){
   return redis.del(setName);
 }
 
+/**
+ * @memberOf module:database
+ * @desc for handling operations relating to "KEY" type
+ */
 var set = {
   add: setAdd,
   del: setRemove,
@@ -61,6 +75,10 @@ var set = {
 };
 
 
+/**
+ * @memberOf module:database
+ * @desc for handling operations relating to "SET" type
+ */
 var key = {
   set: keySet,
   get: keyGet,
@@ -75,3 +93,4 @@ module.exports = {
   key: key,
   set: set
 };  
+

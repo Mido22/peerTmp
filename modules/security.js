@@ -1,3 +1,9 @@
+/**
+ * security module.
+ * @module security
+ * @desc the main application logic is written here( kinda like the business class).
+ */
+
 var schedule = require('node-schedule'),
   path = require('path'),
   crypto = require(path.join('..', 'lib', 'peerio_crypto_mod')),
@@ -23,6 +29,15 @@ var CONST = {
 keys.public = crypto.getPublicKeyString(keyPair.publicKey);
 keys.private = nacl.util.encodeBase64(keyPair.secretKey);
 
+/**
+ * @func encryptToken
+ * @private
+ * @memberOf module:security
+ * @desc method for encrypting token
+ * @param {String} token - the generated authentication token
+ * @param {String} userPublicKeyString - Public Key of the user.
+ * @returns {Object} - has three attributes: token, nonce, ephemeralServerPublicKey.
+ */
 function encryptToken(token, userPublicKeyString) {
   var nonce = nacl.randomBytes(24);
   var userBytes = new Uint8Array(Base58.decode(userPublicKeyString));
@@ -40,6 +55,13 @@ function encryptToken(token, userPublicKeyString) {
   }
 }
 
+/**
+ * @func generateToken
+ * @private
+ * @memberOf module:security
+ * @desc method for generating authentication token
+ * @returns {Object} - the generated authentication token.
+ */
 function generateToken() {
   var token = new Uint8Array(32);
   token[0] = 0x41;
@@ -48,6 +70,14 @@ function generateToken() {
   return nacl.util.encodeBase64(token);
 }
 
+/**
+ * @func generatesTokens
+ * @memberOf module:security
+ * @param {String} pk - Public Key of the user.
+ * @param {String} count - number of auth tokens to be generated.
+ * @desc method for generating authentication token for a given Public Key
+ * @returns {Promise} - A promise resolving to give array of encrypted tokens.
+ */
 function generatesTokens(pk, count){
   if(!pk)  return Promise.reject(new Error('Public Key Missing'));
   
@@ -78,6 +108,14 @@ function generatesTokens(pk, count){
   });
 }
 
+/**
+ * @func addToken
+ * @private
+ * @memberOf module:security
+ * @param {String} pk - Public Key of the user.
+ * @desc method for adding the auth token to the database and returning a single authentication token.
+ * @returns {Promise} - A promise resolving to give a single encrypted token.
+ */
 function addToken(pk){
   var user = CONST.prepend + pk,
     token = generateToken();
@@ -93,6 +131,15 @@ function addToken(pk){
   });
 }
 
+/**
+ * @func removeExpiredToken
+ * @private
+ * @memberOf module:security
+ * @param {String} user - user set name in the database.
+ * @param {String} key - the authenication token to be checked.
+ * @desc method for removing a single autentication token from user set in database if it is expired.
+ * @returns {Promise}
+ */
 function removeExpiredToken(user, key){
   return db.key.exists(key).then(function(bool){
     if(bool){
@@ -103,6 +150,14 @@ function removeExpiredToken(user, key){
   });
 }
 
+/**
+ * @func removeExpiredTokens
+ * @private
+ * @memberOf module:security
+ * @param {String} user - user set name in the database.
+ * @desc method for removing all the expired tokens in a given user set.
+ * @returns {Promise}
+ */
 function removeExpiredTokens(user){
 
   var tokenCount, newCount;
@@ -129,6 +184,14 @@ function removeExpiredTokens(user){
   });
 }
 
+/**
+ * @func clearUsers
+ * @private
+ * @memberOf module:security
+ * @param {Array} users - array of user stings for whom expired tokens have be removed.
+ * @desc method which removes expired tokens from a given array of user sets.
+ * @returns {Promise}
+ */
 function clearUsers(users){
   var promise = Promise.resolve();
   users.forEach(function(user){
@@ -139,18 +202,26 @@ function clearUsers(users){
   return promise;
 }
 
+/**
+ * @func checkToken
+ * @memberOf module:security
+ * @param {String} user - user set name in the database.
+ * @param {String} key - the authenication token to be checked.
+ * @desc method the checks the validity of given pair, if true, removes the token from database
+ * @returns {Promise}  - A promise that resolves to boolean value.
+ */
 function checkToken(user, key){
 
-	if(!user || !key)	return Promise.resolve(false);
+  if(!user || !key)  return Promise.resolve(false);
 
   var publicKey, redUser = CONST.prepend + user, bool;
   return db.key.get(key).then(function(pk){
     publicKey = pk;
     bool = (user === publicKey);
     if(bool){
-    	return db.key.del(key).then(function(){
-		    return db.set.del(redUser, key);
-		  });
+      return db.key.del(key).then(function(){
+        return db.set.del(redUser, key);
+      });
     };
   }).then(function(){
     return bool;
@@ -177,8 +248,6 @@ schedule.scheduleJob('* 3 * * *', function() {
 });
 
 module.exports = {
-  encryptToken: encryptToken,
-  generateToken: generateToken,
   checkToken: checkToken,
   generatesTokens: generatesTokens
 };

@@ -1,6 +1,20 @@
+/**
+ * Router module.
+ * @module routes
+ * @exports Router
+ * @desc the modules that deal with handling api requests.
+ */
+
 var path = require('path'), 
   security = require(path.join('..', 'modules', 'security')),
   tokenGenCount = 10; 
+
+/** @class Router
+ * @memberof module:routes
+ * @desc middleware and routing system
+ * @param {Object} express - the express module to which the module has to be added.
+ * @return {express.Router} - the router object
+ */
 
 function Router(express){
 

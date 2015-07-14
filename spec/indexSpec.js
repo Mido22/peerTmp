@@ -11,9 +11,9 @@ var request = require('request'),
   dummyPublicKey = 'garbage', 
   dummyToken = 'garbage',
   CONST = {
-  	prepend: 'auth:', 
-  	maxAllowedActiveKeys: 1024
-	},
+    prepend: 'auth:', 
+    maxAllowedActiveKeys: 1024
+  },
   API = {
     gen: host + '/api/generate/',
     token: host + '/api/tokens/'
@@ -21,19 +21,19 @@ var request = require('request'),
 
 describe("Generating tokens", function() {
 
-	var myKeyPair,
-	  myPublicKeyString;
+  var myKeyPair,
+    myPublicKeyString;
 
-	beforeEach(function(){
-		myKeyPair =  nacl.box.keyPair();
-	  myPublicKeyString = crypto.getPublicKeyString(myKeyPair.publicKey);
-	});
+  beforeEach(function(){
+    myKeyPair =  nacl.box.keyPair();
+    myPublicKeyString = crypto.getPublicKeyString(myKeyPair.publicKey);
+  });
 
-	afterEach(function(done){
-		clearSet(myPublicKeyString).then(function(){
-			myKeyPair = myPublicKeyString =  null;
+  afterEach(function(done){
+    clearSet(myPublicKeyString).then(function(){
+      myKeyPair = myPublicKeyString =  null;
     }).catch(fail).then(done);
-	});
+  });
 
   it("should respond with 10 encrypted tokens", function(done) {
 
@@ -48,9 +48,9 @@ describe("Generating tokens", function() {
 
   it("should respond with error when max amount of active tokens for that user reached", function(done) {
 
-  	fakeActiveKeys(myPublicKeyString, CONST.maxAllowedActiveKeys)
-  	.then(function(){
-    	return pRequest(formURL('generate', myPublicKeyString));
+    fakeActiveKeys(myPublicKeyString, CONST.maxAllowedActiveKeys)
+    .then(function(){
+      return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       expect(response.statusCode).toEqual(500);
     }).catch(fail).then(done);
@@ -59,17 +59,17 @@ describe("Generating tokens", function() {
 
   it("when active token limit is reaching, it should return tokens till limit is reached", function(done) {
 
-  	var fakeActiveCount = CONST.maxAllowedActiveKeys  - (2 + Math.floor(Math.random()* 8)),
-  			tokenCount = CONST.maxAllowedActiveKeys - fakeActiveCount,tokens;
+    var fakeActiveCount = CONST.maxAllowedActiveKeys  - (2 + Math.floor(Math.random()* 8)),
+        tokenCount = CONST.maxAllowedActiveKeys - fakeActiveCount,tokens;
 
-  	fakeActiveKeys(myPublicKeyString, fakeActiveCount)
-  	.then(function(){
-    	return pRequest(formURL('generate', myPublicKeyString));
+    fakeActiveKeys(myPublicKeyString, fakeActiveCount)
+    .then(function(){
+      return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       tokens = JSON.parse(response.body).tokens; 
       expect(response.statusCode).toEqual(200);
       expect(tokens.length).toEqual(tokenCount);
-    	return pRequest(formURL('generate', myPublicKeyString));
+      return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       expect(response.statusCode).toEqual(500);
       return clearTokens(tokens, myPublicKeyString, myKeyPair);
@@ -79,28 +79,28 @@ describe("Generating tokens", function() {
 
   it("once active tokens are used, new tokens must be allowed to be created", function(done) {
 
-  	var fakeActiveCount = CONST.maxAllowedActiveKeys  - (2 + Math.floor(Math.random()* 8)),
-  			tokenCount = CONST.maxAllowedActiveKeys - fakeActiveCount,
-  			tokens;
+    var fakeActiveCount = CONST.maxAllowedActiveKeys  - (2 + Math.floor(Math.random()* 8)),
+        tokenCount = CONST.maxAllowedActiveKeys - fakeActiveCount,
+        tokens;
 
-  	fakeActiveKeys(myPublicKeyString, fakeActiveCount)
-  	.then(function(){
-    	return pRequest(formURL('generate', myPublicKeyString));
+    fakeActiveKeys(myPublicKeyString, fakeActiveCount)
+    .then(function(){
+      return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       tokens = JSON.parse(response.body).tokens; 
       expect(response.statusCode).toEqual(200);
       expect(tokens.length).toEqual(tokenCount);
-    	return pRequest(formURL('generate', myPublicKeyString));
+      return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       expect(response.statusCode).toEqual(500);
       return clearTokens(tokens, myPublicKeyString, myKeyPair);
-  	}).then(function(){
-    	return pRequest(formURL('generate', myPublicKeyString));
+    }).then(function(){
+      return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       tokens = JSON.parse(response.body).tokens; 
       expect(response.statusCode).toEqual(200);
       expect(tokens.length).toEqual(tokenCount);
-    	return pRequest(formURL('generate', myPublicKeyString));
+      return pRequest(formURL('generate', myPublicKeyString));
     }).then(function(response){
       expect(response.statusCode).toEqual(500);
       return clearTokens(tokens, myPublicKeyString, myKeyPair);
@@ -111,26 +111,26 @@ describe("Generating tokens", function() {
 
 describe("Validating tokens", function() {
 
-	var tokens, myKeyPair, myPublicKeyString;
+  var tokens, myKeyPair, myPublicKeyString;
 
-	beforeEach(function(done){
+  beforeEach(function(done){
 
-		myKeyPair =  nacl.box.keyPair();
-	  myPublicKeyString = crypto.getPublicKeyString(myKeyPair.publicKey);
+    myKeyPair =  nacl.box.keyPair();
+    myPublicKeyString = crypto.getPublicKeyString(myKeyPair.publicKey);
     pRequest( formURL('generate', myPublicKeyString))
     .then(function(response){
       tokens = JSON.parse(response.body).tokens; 
 
     }).then(done.bind(null, null), done);
-	});
+  });
 
-	afterEach(function(done){
-		clearSet(myPublicKeyString).then(function(){
-			return clearTokensIgnoreError(tokens);
-		}).then(function(){
-			myKeyPair = myPublicKeyString = tokens =  null;
+  afterEach(function(done){
+    clearSet(myPublicKeyString).then(function(){
+      return clearTokensIgnoreError(tokens);
+    }).then(function(){
+      myKeyPair = myPublicKeyString = tokens =  null;
     }).catch(fail).then(done);
-	});
+  });
 
   it("should return an error for an unknown token", function(done) {
 
@@ -213,7 +213,7 @@ function formURL(type, data){
                               method: 'post',
                               json:  true,
                               body: {
-                              	publicKey: arguments[2]
+                                publicKey: arguments[2]
                               }
                             };
   }
@@ -221,58 +221,58 @@ function formURL(type, data){
 
 // for promisifying request.
 function pRequest(uri){
-	return new Promise(function(resolve, reject){
-		request(uri, function(err, response){
-			if(err)	return reject(err);
-			resolve(response);
-		});
-	});
+  return new Promise(function(resolve, reject){
+    request(uri, function(err, response){
+      if(err)  return reject(err);
+      resolve(response);
+    });
+  });
 }
 
 // for faking active keys for that user.
 function fakeActiveKeys(pk, count){
-	var i, 
-	  user = CONST.prepend + pk,
-	  promises = [];
+  var i, 
+    user = CONST.prepend + pk,
+    promises = [];
 
-	for(i=0;i<count;i++){
-		promises.push(db.set.add(user, i));
-	}
+  for(i=0;i<count;i++){
+    promises.push(db.set.add(user, i));
+  }
 
-	return Promise.all(promises);
+  return Promise.all(promises);
 }
 
 
 // for clearing a set
 function clearSet(pk){
-	return db.set.clear(CONST.prepend + pk);
+  return db.set.clear(CONST.prepend + pk);
 }
 
 // for clearing active tokens
 function clearTokens(tokens, pk, keyPair){
-	if(!tokens || !tokens.length)	return Promise.resolve();
+  if(!tokens || !tokens.length)  return Promise.resolve();
 
-	var user = CONST.prepend + pk;
+  var user = CONST.prepend + pk;
   tokens = tokens.map(function(token){
-  	return crypto.decryptToken(token, keyPair);
+    return crypto.decryptToken(token, keyPair);
   });
 
-	var promises  = tokens.map(function(token){
-			return db.set.del(user, token).then(function(bool){
-				if(!bool)	throw new Error('Inactive key');
-				return db.key.del(token);
-			}).then(function(bool){
-				if(!bool)	throw new Error('Inactive key');
-			});
-	});
-	return Promise.all(promises).then(function(res){
-			if(res.length!== tokens.length)	throw new Error('Inactive Token');
-	});
+  var promises  = tokens.map(function(token){
+      return db.set.del(user, token).then(function(bool){
+        if(!bool)  throw new Error('Inactive key');
+        return db.key.del(token);
+      }).then(function(bool){
+        if(!bool)  throw new Error('Inactive key');
+      });
+  });
+  return Promise.all(promises).then(function(res){
+      if(res.length!== tokens.length)  throw new Error('Inactive Token');
+  });
 }
 
 
 // for clearing active tokens as keys, leaves the values in set( "auth:<public key>"") as it is
 function clearTokensIgnoreError(tokens){
-	if(!tokens || !tokens.length)	return Promise.resolve();
-	return Promise.all(tokens.map(db.key.del));
+  if(!tokens || !tokens.length)  return Promise.resolve();
+  return Promise.all(tokens.map(db.key.del));
 }
