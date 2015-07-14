@@ -141,14 +141,17 @@ function clearUsers(users){
 }
 
 function checkToken(user, key){
-  var publicKey, redUser = CONST.prepend + user;
+  var publicKey, redUser = CONST.prepend + user, bool;
   return db.key.get(key).then(function(pk){
     publicKey = pk;
-    return db.key.del(key);
+    bool = (user === publicKey);
+    if(bool){
+    	return db.key.del(key).then(function(){
+		    return db.set.del(redUser, key);
+		  });
+    };
   }).then(function(){
-    return db.set.del(redUser, key);
-  }).then(function(){
-    return user === publicKey;
+    return bool;
   });
 
 }

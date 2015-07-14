@@ -16,7 +16,6 @@ function Router(express){
       });
   });
 
-
   // check validity of a token
   router.post('/tokens/:token', function(req, res) {
       var token  = decodeURIComponent(req.params.token);

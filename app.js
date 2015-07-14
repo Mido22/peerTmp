@@ -1,3 +1,8 @@
+
+
+// checking if Proise is found, uses the global shim.
+require('es6-promise').polyfill();
+
 var express = require('express'),
   http = require('http'),
   port = process.env.PORT || 3333,
@@ -6,9 +11,6 @@ var express = require('express'),
   httpServer = http.createServer(app),
   path = require('path'),
   router = require(path.join(__dirname, 'modules', 'routes'))(express);
-
-// checking if Proise is found, uses the global shim.
-require('es6-promise').polyfill();
 
 
 app.listen(port);

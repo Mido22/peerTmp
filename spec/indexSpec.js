@@ -1,3 +1,8 @@
+
+// checking if Proise is found, uses the global shim.
+require('es6-promise').polyfill();
+
+
 var request = require('request'),
   path = require('path'),
   crypto = require(path.join(__dirname, '..', 'lib', 'peerio_crypto_mod')),
@@ -26,10 +31,21 @@ function formURL(type, data){
   }
 }
 
+function pRequest(uri){
+	return new Promise(function(resolve, reject){
+		request(uri, function(err, response){
+			if(err)	return reject(err);
+			resolve(response);
+		});
+	});
+}
+
 describe("Generating tokens", function() {
+
   it("should respond with 10 encrypted tokens", function(done) {
     var myPublicKeyString = crypto.getPublicKeyString(myKeyPair.publicKey);
-    request( formURL('generate', myPublicKeyString), function(error, response, body){
+    pRequest( formURL('generate', myPublicKeyString))
+    .then(function(response){
       var b = JSON.parse(response.body);
       tokens = b.tokens; 
       serverPublicKey = b.ephemeralServerPublicKey;
@@ -38,34 +54,39 @@ describe("Generating tokens", function() {
       done();
     });
   });
-})
+
+
+});
 
 describe("Validating tokens", function() {
   it("should return an error for an unknown token", function(done) {
     var myPublicKeyString = crypto.getPublicKeyString(myKeyPair.publicKey);
 
-    request(formURL('token', 'garbage'), function(error, response, body){
-        expect(response.statusCode).toEqual(500);
-        done();
-      });
-  })
+    pRequest(formURL('token', 'garbage'))
+    .then(function(response){
+      expect(response.statusCode).toEqual(500);
+      done();
+    });
+  });
 
   it("should return an error for a known token and incorrect user", function(done) {
     var validDecryptedToken = crypto.decryptToken(tokens[0], myKeyPair);
 
-    request(formURL('token', validDecryptedToken, 'garbage'), function(error, response, body){
-        expect(response.statusCode).toEqual(500);
-        done();
-      });  
-  })
+    pRequest(formURL('token', validDecryptedToken, 'garbage'))
+    .then(function(response){
+      expect(response.statusCode).toEqual(500);
+      done();
+    });  
+  });
 
   it("should return an error for an unknown token", function(done) {
     var myPublicKeyString = crypto.getPublicKeyString(myKeyPair.publicKey);
 
-    request(formURL('token', 'garbage', myPublicKeyString), function(error, response, body){
-        expect(response.statusCode).toEqual(500);
-        done();
-      });  
+    pRequest(formURL('token', 'garbage', myPublicKeyString))
+    .then(function(response){
+      expect(response.statusCode).toEqual(500);
+      done();
+    });  
   
-  })
-})
+  });
+});
