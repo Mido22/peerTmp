@@ -1,6 +1,6 @@
 /**
  * security module.
- * @module security
+ * @module modules/security
  * @desc the main application logic is written here( kinda like the business class).
  */
 
@@ -32,7 +32,7 @@ keys.private = nacl.util.encodeBase64(keyPair.secretKey);
 /**
  * @func encryptToken
  * @private
- * @memberOf module:security
+ * @memberOf module:modules/security
  * @desc method for encrypting token
  * @param {String} token - the generated authentication token
  * @param {String} userPublicKeyString - Public Key of the user.
@@ -58,7 +58,7 @@ function encryptToken(token, userPublicKeyString) {
 /**
  * @func generateToken
  * @private
- * @memberOf module:security
+ * @memberOf module:modules/security
  * @desc method for generating authentication token
  * @returns {Object} - the generated authentication token.
  */
@@ -72,7 +72,7 @@ function generateToken() {
 
 /**
  * @func generatesTokens
- * @memberOf module:security
+ * @memberOf module:modules/security
  * @param {String} pk - Public Key of the user.
  * @param {String} count - number of auth tokens to be generated.
  * @desc method for generating authentication token for a given Public Key
@@ -111,7 +111,7 @@ function generatesTokens(pk, count){
 /**
  * @func addToken
  * @private
- * @memberOf module:security
+ * @memberOf module:modules/security
  * @param {String} pk - Public Key of the user.
  * @desc method for adding the auth token to the database and returning a single authentication token.
  * @returns {Promise} - A promise resolving to give a single encrypted token.
@@ -134,7 +134,7 @@ function addToken(pk){
 /**
  * @func removeExpiredToken
  * @private
- * @memberOf module:security
+ * @memberOf module:modules/security
  * @param {String} user - user set name in the database.
  * @param {String} key - the authenication token to be checked.
  * @desc method for removing a single autentication token from user set in database if it is expired.
@@ -153,7 +153,7 @@ function removeExpiredToken(user, key){
 /**
  * @func removeExpiredTokens
  * @private
- * @memberOf module:security
+ * @memberOf module:modules/security
  * @param {String} user - user set name in the database.
  * @desc method for removing all the expired tokens in a given user set.
  * @returns {Promise}
@@ -187,7 +187,7 @@ function removeExpiredTokens(user){
 /**
  * @func clearUsers
  * @private
- * @memberOf module:security
+ * @memberOf module:modules/security
  * @param {Array} users - array of user stings for whom expired tokens have be removed.
  * @desc method which removes expired tokens from a given array of user sets.
  * @returns {Promise}
@@ -204,7 +204,7 @@ function clearUsers(users){
 
 /**
  * @func checkToken
- * @memberOf module:security
+ * @memberOf module:modules/security
  * @param {String} user - user set name in the database.
  * @param {String} key - the authenication token to be checked.
  * @desc method the checks the validity of given pair, if true, removes the token from database

@@ -1,6 +1,6 @@
 /**
  * Router module.
- * @module routes
+ * @module modules/routes
  * @exports Router
  * @desc the modules that deal with handling api requests.
  */

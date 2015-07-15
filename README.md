@@ -1,16 +1,29 @@
-Install Redis, node, npm, jasmine. 
+##System Setup 
 
-To run `node index.js`. To run tests `jasmine`. 
+I am assuming that it is an unix environment, so first install software and set-up environment: 
+  * sudo apt-get install --yes nodejs redis
+  * sudo npm install -g jasmine jsdoc
 
-Ephemeral Peerio Server Keypair: A miniLock key pair used by the Peerio Server Application in order to issue authentication challenges. It is ephemeral and the Peerio Server Application will regenerate it every 24 hours. We will refer to this value as ephemeralServerKeys and to the miniLock ID as the ephemeralServerID.
 
-Authentication Challenge: A challenge performed in order for the client to receive an authentication token from the server.
+then: 
+  * cd <Desired_project_location>
+  * run `npm start` to start the application
+  * run `npm test` to run the test cases.
+  * run `npm run doc` to generate the documentation, can be found in `./docs` folder.
 
-    Client sends an authentication token request which includes their Peerio username and miniLock ID.
-    Server checks if the given miniLock ID matches the one it has on record for that username. If the check fails, we issue an error and the request fails.
-    Server generates a 32-byte value authToken. The first two bytes of an authToken are always 0x41, 0x54, followed by 30 random bytes.
-    Server encrypts authToken with the nacl.box construction using their ephemeralServerKeys secret key and the client's miniLock ID.
-    Server sends authToken, the nonce used to encrypt the authToken, and ephemeralServerID to the client.
-    The client decrypts authToken. If the decryption is successful, the client may now use authToken as an authentication token to submit a request.
+##Changes made:
 
-Note that the server must limit the number of issued authToken to a particular user to a maximum of 1024 at a time. An authentication token is only valid for a single authenticated request. The server keeps track of which authTokens are tied to which users.
+I find promises to be more comfortable than normal node async callbacks, thus used `es6-promise` polyfill. That is reason I used `then-redis` as it is the promisified version of `redis` module. I have used `jsdoc` for generationg docs. Also removed `loadash` and `scrypt` as they were not being used. I have stored all configurable values on top of each module, later this can be moved to a common `config.json` and config variables in modules can be made to refer them.
+
+##Assumptions about requirement: 
+
+I have made some basic assumptions about the system. Like, I have assumed that the authentication tokens expire 15 minutes after creation, and when unused tokens reach the limit (1024) per user, the system would return error when user asks for more tokens, but if user is reaching limit( say 1020) but requests, we return no. of tokens( 4 tokens) till the limit is reached. Also, I have scheduled a job to run every 1 hour that checks and removes expired tokens from users with more than certain amount of unused tokens, and another job that runs every 24 hours that removes expired tokens for all users in the database.
+
+
+## Project Structure
+
+  * `./app.js` - contains code concerning whole application
+  * `./modules/routes.js` - contains code  handling of api requests.
+  * `./modules/security.js` - contains code handling token generation and validation.
+  * `./modules/database.js` - contains code handling database interaction, later, any change in database, only this module has to be modified.
+  * `./spec/indexSpec.js` - contains the jasmine tests.

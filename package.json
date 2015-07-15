@@ -4,11 +4,11 @@
   "version": "0.1.0",
   "scripts": {
     "start": "node app.js",
-    "test": "jasmine"
+    "test": "jasmine",
+    "doc": "rm -rf docs && jsdoc modules/ -d docs"
   },
   "private": true,
-  "author": "FHV",
-  "scrypt": "latest",
+  "author": "Varun S",
   "dependencies": {
     "blake2s-js": "latest",
     "body-parser": "latest",
@@ -20,7 +20,8 @@
   },
   "devDependencies": {
     "request": "latest",
-    "jasmine-node": "latest"
+    "jasmine-node": "latest",
+    "jsdoc": "3.x.x"
   },
   "engines": {
     "node": "0.10.x"
