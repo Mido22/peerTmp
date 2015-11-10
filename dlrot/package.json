@@ -1,0 +1,14 @@
+{
+  "name": "dlrot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "\"one day, not today\""
+  },
+  "author": "Mido",
+  "license": "MIT",
+  "dependencies": {
+    "zombie": "^4.2.1"
+  }
+}
