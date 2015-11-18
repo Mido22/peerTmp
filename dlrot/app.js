@@ -10,13 +10,13 @@ var browser = new Browser({waitDuration: 5*1000})
   //, url = 'http://kat.cr/user/YIFY/uploads/?page='
   , url = 'https://kickass.unblocked.la/user/YIFY/uploads/?page='
   , promise = Promise.resolve()
-  , i = 1
+  , i = 118
   , max=243
   , counter = 0
   , errFile = 'err.txt'
 ;
 
-fs.appendFile(errFile, '\n\n\n new \n', fe);
+fs.appendFile(errFile, '\n\n\n new \n', fd);
 
 deleteFolderRecursive(saveLocation);
 
@@ -24,15 +24,15 @@ deleteFolderRecursive(saveLocation);
 function save(node){
   var url = node.attributes.href._nodeValue;
   return (new Promise((r, r1) =>{
-    var file, fl = saveLocation + url.split(divWord)[1] + '.torrent', ul = 'https:' + url.split(divWord)[0];    
+    var file, fl = saveLocation + url.split(divWord)[1] + '.torrent', ul = 'http:' + url.split(divWord)[0];    
     http.get(ul, function(response) {
       clearTimeout(t);
       file = fs.createWriteStream(fl);
       response.pipe(file);
       r();
     }).on('error', r1);  
-    var t = setTimeout(r1, 5000);
-  })).catch(e => {fs.appendFile(errFile, url+' \n', fe);console.error(url)});
+    var t = setTimeout(r1, 10000);
+  })).catch(e => {fs.appendFile(errFile, url+' \n', fd);console.error(url, e)});
 }
 
 function visit(url){
@@ -54,7 +54,7 @@ function visit(url){
 }
 
 function fe(e){ fd(e); process.exit();}
-function fd(e){ console.error(e)}
+function fd(e){ if(e) console.error(e)}
 
 
 function fs(s){ console.log('all done...'); process.exit(); }
@@ -64,7 +64,7 @@ function onSite(){
 
   function fn(url){
     p=p
-      .then(()=> t(500))
+      //.then(()=> t(500))
       .then( () => save(url))
       .then(() => {counter++;console.log('counter: ', counter)});
   }
@@ -78,8 +78,9 @@ function chain(i){
   promise = promise 
     .then(() => console.log('trying page no: ', i))
     .then(() => visit(url+i))
+    .catch(fd)
     .then(() => console.log('finished ', i, 'out of ', max, ' ...'))
-    .then(() => t(1000))
+    .then(() => t(5000))
   ;  
 }
 

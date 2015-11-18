@@ -1,0 +1,15 @@
+{
+  "name": "dl-auto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "add.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cron": "^1.0.9",
+    "open": "0.0.5"
+  }
+}
