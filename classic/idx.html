@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+<div> Playing: <span id='title'></span></div>
+<div>    
+<button id='prev'>prev</button><audio controls id = 'aud' autoplay controls></audio><button id='next'>next</button>
+</div>
+<script>
+var list=[
+  ''
+  , ''
+  , ''
+  , ''
+  , ''
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/ba/New_York_Symphony_Orchestra_-_Willem_Mengelberg_-_Symphony_No._1_in_C_major%2C_Op._21_-_1st_Movement_-_Adagio_molto_-_Allegro_con_brio_-_Hmv-d1867-42-856.flac'
+  , 'https://upload.wikimedia.org/wikipedia/commons/2/25/New_York_Symphony_Orchestra_-_Willem_Mengelberg_-_Symphony_No._1_in_C_major%2C_Op._21_-_1st_Movement_-_Allegro_con_brio_-_Hmv-d1867-42-897.flac'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/e8/New_York_Symphony_Orchestra_-_Willem_Mengelberg_-_Symphony_No._1_in_C_major%2C_Op._21_-_1st_Movement_-_Allegro_con_brio_-_Hmv-d1868-42-857.flac'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b3/New_York_Symphony_Orchestra_-_Willem_Mengelberg_-_Symphony_No._1_in_C_major%2C_Op._21_-_3rd_Movement_-_Menuetto_-_Allegro_molto_e_vivace_-_Hmv-d1868-42-858.flac'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/86/Beethoven_Symphony_2_D_major_Op_36_-_1_Adagio_molto_%E2%80%93_Allegro_con_brio.oga'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Beethoven_Symphony_2_D_major_Op_36_-_2_Larghetto_%28A_major%29.oga'
+  , 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Beethoven_Symphony_2_D_major_Op_36_-_3_Scherzo_Allegro_%E2%80%93_Trio.oga'
+  , 'https://upload.wikimedia.org/wikipedia/commons/a/a0/Beethoven_Symphony_2_D_major_Op_36_-_4_Allegro_molto.oga'
+  , 'https://upload.wikimedia.org/wikipedia/commons/d/da/Beethoven_SymphonyNo.3Eroica_LudwigVanBeethoven-SymphonyNo.3InEFlatMajorEroicaOp.55-01-AllegroConBrio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/1/14/Beethoven_SymphonyNo.3Eroica_LudwigVanBeethoven-SymphonyNo.3InEFlatMajorEroicaOp.55-02-MarciaFunebreAdagioAssai.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/0/07/Beethoven_SymphonyNo.3Eroica_LudwigVanBeethoven-SymphonyNo.3InEFlatMajorEroicaOp.55-03-ScherzoAllegroVivace.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Beethoven_SymphonyNo.3Eroica_LudwigVanBeethoven-SymphonyNo.3InEFlatMajorEroicaOp.55-04-FinaleAllegroMolto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Ludwig_van_Beethoven_-_symphony_no._4_in_b_flat_major%2C_op._60_-_i._adagio_-_allegro_vivace.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/8c/Ludwig_van_Beethoven_-_symphony_no._4_in_b_flat_major%2C_op._60_-_ii._adagio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/7/73/Ludwig_van_Beethoven_-_symphony_no._4_in_b_flat_major%2C_op._60_-_iii._allegro_vivace.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/9/90/Ludwig_van_Beethoven_-_symphony_no._4_in_b_flat_major%2C_op._60_-_iv._allegro_ma_non_troppo.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Ludwig_van_Beethoven_-_symphony_no._5_in_c_minor%2C_op._67_-_i._allegro_con_brio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/5/5b/Ludwig_van_Beethoven_-_Symphonie_5_c-moll_-_1._Allegro_con_brio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/8c/PDP-CH_-_BBC_Symphony_Orchestra_-_Arturo_Toscanini_-_Symphony_No._6_in_F_major%2C_Op._68_-_Beethoven_-_Part_1_-_1st_Movement_-_Hmv-db3333-14707a-mo.flac'
+  , 'https://upload.wikimedia.org/wikipedia/commons/9/9d/PDP-CH_-_BBC_Symphony_Orchestra_-_Arturo_Toscanini_-_Symphony_No._6_in_F_major%2C_Op._68_-_Beethoven_-_Part_2_-_1st_Movement_-_Hmv-db3333-14707b-mo.flac'
+  , 'https://upload.wikimedia.org/wikipedia/commons/1/1a/PDP-CH_-_BBC_Symphony_Orchestra_-_Arturo_Toscanini_-_Symphony_No._6_in_F_major%2C_Op._68_-_Beethoven_-_Part_3_-_1st_Movement_-_Hmv-db3334-14708a-mo.flac'
+  , 'https://upload.wikimedia.org/wikipedia/commons/4/45/PDP-CH_-_BBC_Symphony_Orchestra_-_Arturo_Toscanini_-_Symphony_No._6_in_F_major%2C_Op._68_-_Beethoven_-_Part_4_-_2nd_Movement_-_Hmv-db3334-14708b-mo.flac'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/e2/PDP-CH_-_BBC_Symphony_Orchestra_-_Arturo_Toscanini_-_Symphony_No._6_in_F_major%2C_Op._68_-_Beethoven_-_Part_5_-_2nd_Movement_-_Hmv-db3335-14709a-mo.flac'
+  , 'https://upload.wikimedia.org/wikipedia/commons/2/21/PDP-CH_-_BBC_Symphony_Orchestra_-_Arturo_Toscanini_-_Symphony_No._6_in_F_major%2C_Op._68_-_Beethoven_-_Part_6_-_2nd_Movement_-_Hmv-db3335-14709b-mo.flac'
+  , 'https://upload.wikimedia.org/wikipedia/commons/0/0c/JOHN_MICHEL_CELLO-BEETHOVEN_SYMPHONY_7_Allegretto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/e4/JOHN_MICHEL_CELLO-BEETHOVEN_SYMPHONY_7_Finale.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/2/28/Ludwig_van_Beethoven_-_symphony_no._8_in_f_major%2C_op._93_-_i._allegro_vivace_e_con_brio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/89/Ludwig_van_Beethoven_-_symphony_no._8_in_f_major%2C_op._93_-_ii._allegretto_scherzando.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Ludwig_van_Beethoven_-_piano_concerto_no._1_in_c_major%2C_op._15_-_ii._largo.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/c/c4/Ludwig_van_Beethoven_-_piano_concerto_no._1_in_c_major%2C_op._15_-_iii._rondo_%28allegro_scherzando%29.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Ludwig_van_Beethoven_-_piano_concerto_no._1_in_c_major%2C_op._15_-_i._allegro_con_brio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/3/3c/01_-_Vivaldi_Spring_mvt_1_Allegro_-_John_Harrison_violin.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/a/af/Vivaldi_-_Concerto_for_Two_Violins_in_A_minor%2C_Op._3%2C_No._8_-_1._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/d/df/Vivaldi_-_Concerto_for_Two_Violins_in_A_minor%2C_Op._3%2C_No._8_-_2._Larghetto_e_spiritoso.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/c/c0/Vivaldi_-_Concerto_for_Two_Violins_in_A_minor%2C_Op._3%2C_No._8_-_3._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/0/01/BWV972-2.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/3/32/Antonio_Vivaldi_-_Concerto_for_Two_Violins_in_D_minor_Op._3_No._11_-_1._Allegro_-_Adagio_e_spiccato_-_Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/7/7d/Antonio_Vivaldi_-_Concerto_for_Two_Violins_in_D_minor_Op._3_No._11_-_2._Largo_e_spiccato.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Largo_spiccato_Vivaldi_BWV596.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b8/Antonio_Vivaldi_-_Concerto_for_Two_Violins_in_D_minor_Op._3_No._11_-_3._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/5/51/Finale_Tchaikovsky_Symphony_No_4.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b7/Tchaikovsky%2C_Symphony_No._6_In_B_Minor%2C_Op._74%2C_%27Pathetique%27_-_I._Adagio%2C_Allegro_Non_Troppo.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/a/aa/Tchaikovsky%2C_Symphony_No._6_in_B_minor%2C_Op._74%2C_%27Pathetique%27_-_II._Allegro_con_gracia.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/c/c4/Tchaikovsky%2C_Symphony_No._6_in_B_minor%2C_Op._74%2C_%27Pathetique%27_-_III._Allegro_molto_vivace.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/e8/Tchaikovsky%2C_Symphony_No._6_in_B_minor%2C_Op._74%2C_%27Pathetique%27_-_IV._Finale_Adagio_lamentoso.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b9/Chromatic_mediant_from_Tchaikovsky%27s_Chant_sans_paroles_mm._43-45.mid'
+  , 'https://upload.wikimedia.org/wikipedia/commons/9/9f/Tchaikovsky_-_Piano_Concerto_No._1_%28first_movement_cadenza%29.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/4/48/Tchaikovsky%2C_Concerto_No.1_in_B-flat_minor_Op.23%2C_I._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Tchaikovsky%2C_Concerto_No.1_in_B-flat_minor_Op.23%2C_II._Andantino.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/0/01/Tchaikovsky%2C_Concerto_No.1_in_B-flat_minor_Op.23%2C_III._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/80/Dante.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Tchaikovsky_the_Seasons_January.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/5/5b/Tchaikovsky_the_Seasons_February.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Tchaikovsky_the_Seasons_March.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/3/38/Tchaikovsky_the_Seasons_April.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/e1/Tchaikovsky_the_Seasons_May.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/5/54/Tchaikovsky_the_Seasons_June.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/80/Tchaikovsky_the_Seasons_July.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Tchaikovsky_the_Seasons_August.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Tchaikovsky_the_Seasons_September.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Tchaikovsky_the_Seasons_October.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Tchaikovsky_the_Seasons_November.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Tchaikovsky_the_Seasons_December.ogg'
+  , 'https://en.wikipedia.org/wiki/File:Pyotr_Ilyich_Tchaikovsky_-_1812_overture.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/c/c0/Tchaikovsky_-_Souvenir_de_Florence%2C_mvt-1_-_US_Army_Band.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/7/74/Dance_Of_The_Sugar_Plum_Fairy.oga'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/88/Fatum.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/0/04/Pyotr_Ilyich_Tchaikovsky_-_1812_overture.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/4/49/Magic_Flute_Overture.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/a/ae/March_of_the_Priests.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/7/7d/Der_Hoelle_Rache.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/c/cc/TelefunkenE2688_01.mp3.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/0/0a/Wolfgang_Amadeus_Mozart_-_Don_Giovanni_-_Overt%C3%BCre.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/0/04/Mozart-Don_Giovanni-Adelina_Patti-Batti%2C_batti_o_bel_Masetto-%281905%29.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Mozart%2C_The_Marriage_of_Figaro_%28overture%29.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/1/18/Wolfgang_Amadeus_Mozart_-_le_nozze_di_figaro_-_no._11_cavatina_%27porgi%2C_amor%27.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b8/Mozart_Symphony_17_in_G_major_K_129.oga'
+  , 'https://upload.wikimedia.org/wikipedia/commons/5/57/Mozart_Symphony_36_KV_425_Linz_1.oga'
+  , 'https://upload.wikimedia.org/wikipedia/commons/3/37/Mozart_Symphony_36_KV_425_Linz_2.oga'
+  , 'https://upload.wikimedia.org/wikipedia/commons/c/c6/Mozart_Symphony_36_KV_425_Linz_3.oga'
+  , 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Mozart_Symphony_36_KV_425_Linz_4.oga'
+  , 'https://upload.wikimedia.org/wikipedia/commons/9/99/Wolfgang_Amadeus_Mozart_-_Symphony_40_g-moll_-_1._Molto_allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/5/51/Wolfgang_Amadeus_Mozart_-_Symphony_40_g-moll_-_2._Andante.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/2/29/Wolfgang_Amadeus_Mozart_-_Symphony_40_g-moll_-_3._Menuetto%2C_Allegretto-Trio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/1/16/Wolfgang_Amadeus_Mozart_-_Symphony_40_g-moll_-_4._Allegro_assai.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/9/90/Dreamworld_-_Reflection_-_Symphony_40.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/3/38/Mozart_-_Concerto_No.17_in_G_-_I._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Mozart_-_Concerto_No.17_in_G_-_II._Andante.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Mozart_-_Concerto_No.17_in_G_-_III._Allegretto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Mozart_Piano_Concerto_N_21_in_C_major%2C_K._467.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/d/df/Mozart_-_5th_Concerto%2C_1st_movement_%28Allegro_aperto%29.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/2/22/Wolfgang_Amadeus_Mozart_-_bassoon_concerto_in_b_flat_major%2C_k._191_-_i._allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/bd/Mozart_-_Bassoon_Concerto_in_Bb_major_-_Andante_ma_adagio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Mozart_-_Bassoon_Concerto_in_Bb_major_-_Rondo_Tempo_di_Menuetto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Mozart_-_Bassoon_Concerto_in_Bb_major_-_Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/7/76/Mozart_-_Concerto_for_Flute_and_Harp_-_1._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Mozart_-_Concerto_for_Flute_and_Harp_-_2._Andantino.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b6/Mozart_-_Concerto_for_Flute_and_Harp_-_3._Rondeau_Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/82/Wolfgang_Amadeus_Mozart_-_flute_concerto_in_g_major%2C_k._313_-_i._allegro_maestoso.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Wolfgang_Amadeus_Mozart_-_Klarinettenkonzert_A-Dur_-_1._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/2/22/Wolfgang_Amadeus_Mozart_-_Clarinet_Concerto_-_1._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/8b/Wolfgang_Amadeus_Mozart_-_Klarinettenkonzert_A-Dur_-_2._Adagio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/9/99/Wolfgang_Amadeus_Mozart_-_Clarinet_Concerto_-_2._Adagio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/a/ae/Wolfgang_Amadeus_Mozart_-_Klarinettenkonzert_A-Dur_-_3._Rondo_%28Allegro%29.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/f/f2/Wolfgang_Amadeus_Mozart_-_Clarinet_Concerto_-_3._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Wolfgang_Amadeus_Mozart_-_Sinfonia_Concertante_f%C3%BCr_Violine%2C_Viola_und_Orchester_-_1._Allegro_m%C3%A6stoso.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/8b/Wolfgang_Amadeus_Mozart_-_Sinfonia_Concertante_f%C3%BCr_Violine%2C_Viola_und_Orchester_-_2._Andante.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/84/Wolfgang_Amadeus_Mozart_-_Sinfonia_Concertante_f%C3%BCr_Violine%2C_Viola_und_Orchester_-_3._Presto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/1/15/Wolfgang_Amadeus_Mozart_-_Sinfonia_Concertante_for_Oboe%2C_Clarinet%2C_Horn%2C_Bassoon_and_Orchestra_-_1._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/3/3b/Wolfgang_Amadeus_Mozart_-_Sinfonia_Concertante_for_Oboe%2C_Clarinet%2C_Horn%2C_Bassoon_and_Orchestra_-_2._Adagio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b7/Wolfgang_Amadeus_Mozart_-_Sinfonia_Concertante_for_Oboe%2C_Clarinet%2C_Horn%2C_Bassoon_and_Orchestra_-_3._Andantino_con_variazioni.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/en/5/56/Standing_in_Motion.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Violinist_CARRIE_REHKOPF-MOZART_SONATA_K304_2nd_mvt.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/87/Wolfgang_Amadeus_mozart_-_String_Quintet_No._4_K.516_-_1._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Wolfgang_Amadeus_mozart_-_String_Quintet_No._4_K.516_-_2._Menuetto_-_Allegretto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/86/Wolfgang_Amadeus_mozart_-_String_Quintet_No._4_K.516_-_3._Adagio_ma_non_troppo.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/6/68/Wolfgang_Amadeus_mozart_-_String_Quintet_No._4_K.516_-_4._Adagio_-_Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Mozart_-_Quintet_for_Piano_and_Winds_-_3._Allegretto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Wolfgang_Amadeus_Mozart_-_Oboe_Quartet_-_1._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/ee/Wolfgang_Amadeus_Mozart_-_Oboe_Quartet_-_2._Adagio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/4/44/Wolfgang_Amadeus_Mozart_-_Oboe_Quartet_-_3._Rondeau_-_Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Mozart_-_Quintet_for_Piano_and_Winds_-_2._Larghetto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b8/Mozart_-_Quintet_for_Piano_and_Winds_-_1._Largo_-_Allegro_moderato.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Wolfgang_Amadeus_Mozart_-_Clarinet_Quintet_-_1._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/6/60/Wolfgang_Amadeus_Mozart_-_Clarinet_Quintet_-_2._Larghetto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/d/d2/Wolfgang_Amadeus_Mozart_-_Clarinet_Quintet_-_3._Menuetto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/b/b2/Wolfgang_Amadeus_Mozart_-_Clarinet_Quintet_-_4._Allegretto_con_variazioni.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/82/Wolfgang_Amadeus_Mozart_-_Serenade_K.375_-_1._Allegro_maestoso.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/0/0d/Wolfgang_Amadeus_Mozart_-_Serenade_K.375_-_2._Menuetto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Wolfgang_Amadeus_Mozart_-_Serenade_K.375_-_3._Adagio.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/2/27/Wolfgang_Amadeus_Mozart_-_Serenade_K.375_-_4._Menuetto.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/1/16/Wolfgang_Amadeus_Mozart_-_Serenade_K.375_-_5._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/2/24/Mozart_-_Eine_kleine_Nachtmusik_-_1._Allegro.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Mozart_Eine_kleine_Nachtmusik_KV525_Satz_4_Rondo.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/1/14/WAMozartContredanseKV609N2.OGG'
+  , 'https://upload.wikimedia.org/wikipedia/commons/7/77/Ave_verum_Mozart_Senftenberg2008.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/8/8b/Mozart_-_Vesperae_Solemmes_de_Confessore_-_Laudate_Dominum.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Mozart_-_vesperae_de_dominica._6._magnificat.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/3/31/Mozart_-_vesperae_de_dominica._5._laudate_dominum.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Mozart_-_vesperae_de_dominica._4._laudate_pueri.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Mozart_-_vesperae_de_dominica._3._beatus_vir.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/3/34/Mozart_-_vesperae_de_dominica._2._confitebor.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/9/93/Mozart_-_vesperae_de_dominica._1._dixit_dominus.ogg'
+  , 'https://upload.wikimedia.org/wikipedia/commons/4/44/Mozart_-_Requiem%2C_I._Intro%C3%AFtus_%28Bruno_Walter%2C_1956%29.oga'
+  , 'https://upload.wikimedia.org/wikipedia/commons/2/20/Mozart_-_Requiem%2C_II._Kyrie_%28Bruno_Walter%2C_1956%29.oga'
+  , ''
+  , ''
+  , ''
+  , ''
+  , ''
+  , ''
+  ]
+  , aud, title, q;
+
+function onReady(){
+  q = new Q();
+  aud = document.getElementById('aud');
+  title = document.getElementById('title');
+  document.getElementById('next').onclick = nextTrack;
+  document.getElementById('prev').onclick = prevTrack;
+  aud.onended = nextTrack;
+  nextTrack();
+}
+
+function nextTrack() {
+  var value = getRandomSrc();
+  q.add(value);
+  aud.src = value;    
+  title.textContent = value.replace(/[\-_\s]+/, ' ');
+  aud.play();
+}
+
+function getRandomSrc(){
+  var i = list[Math.floor(Math.random()*list.length)];
+   return (i.length>4 && i.indexOf(".flac") < 0)? i : getRandomSrc();
+}
+
+function prevTrack() {
+  var value = q.get();
+  aud.src = value;    
+  title.textContent = value.split('/').reduce(function(s, i){return i}, '');
+  aud.play();
+}
+
+function Link(value){
+  this.value = value;
+  this.next=null;
+  this.prev=null;
+}
+
+function Q(){
+  this.max=100;
+  this.len=1;
+  this.head = new Link(getRandomSrc());
+  this.current=this.head;
+  this.add = function(value){
+    var link = new Link(value);
+    if(this.len>=this.max){
+      this.head = this.head.next;
+      this.head.prev = null;
+      this.len--;
+    }
+    this.len++;
+    this.current.next=link;
+    link.prev = this.current;
+    this.current = link;
+  }
+  this.get = function(){
+    if(this.current==this.head){
+      this.head.value=getRandomSrc();
+      return this.head.value;
+    }
+    var link = this.current;
+    this.current = this.current.prev;
+    this.current.next=null;
+    link.prev = null;
+    this.len--;
+    return link.value;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", onReady);
+</script>
+</body>
+</html>
