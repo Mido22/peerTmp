@@ -1,0 +1,18 @@
+{
+  "name": "syslog-server",
+  "version": "0.0.1",
+  "description": "syslog storage server",
+  "main": "app.js",
+  "scripts": {
+    "test": "soon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "N.A"
+  },
+  "author": "Mido",
+  "license": "MIT",
+  "dependencies": {
+    "nedb": "^1.4.0"
+  }
+}
