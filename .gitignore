@@ -4,3 +4,7 @@ docs/*
 .gitignore
 **/*.log
 dlrot/dl
+dlrot/*.txt
+dlrot/x
+**/*.gz
+**/*Test.zip
