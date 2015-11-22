@@ -1,12 +1,11 @@
 
 var SyslogListener = require('./modules/sysloglistener')
-  , myUtils = require('./modules/utils')
   , Database = require('./modules/database')
   , ApiServer = require('./modules/apiServer')
   , logListener
   , db
   , restListener
-  , apiServer,
+  , apiServer
   , dbFileLocation = './logdb.json'
 ;
 

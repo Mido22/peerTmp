@@ -46,11 +46,11 @@ function MyDatabase(config){
           if(err) return reject(err);
           if(!count) return resolve();
           stats.received = count;
-          db.findOne(statFilter).sortOrder({createdAt: 1}).exec(function(err, record){
+          db.findOne(statFilter).sort({createdAt: 1}).exec(function(err, record){
             if(err) return reject(err);
             stats.first = record.time;
-            db.findOne(statFilter).sortOrder({createdAt: -1}).exec(function(err, _record){
-              stats.last = record.time;
+            db.findOne(statFilter).sort({createdAt: -1}).exec(function(err, _record){
+              stats.last = _record.time;
               resolve();
             });
           });
@@ -70,7 +70,7 @@ function MyDatabase(config){
     .then(updateStatsFromDB)
     .then(function(){
       state = 'RUNNING';
-      console.log('The Database has started...');
+      console.log('The Database has started, storing data in ', config.filename|| ' memory');
       updateStatsInterval = setInterval(function(){
         updateStatsToDB().catch(function(){ // if database has stopped running.
           if(updateStatsInterval) clearInterval(updateStatsInterval);
@@ -94,7 +94,7 @@ function MyDatabase(config){
   function updateStatsToDB(){
     isRunning(true);
     return new Promise(function(resolve, reject){
-      db.update({_id:defaultStatId}, stats, function(err, numReplaced){
+      db.update({_id:defaultStatId}, stats, { upsert: true }, function(err, numReplaced){
         if(err) return reject(err);
         if(numReplaced!==1) return reject('Database is not updated');
         resolve();
@@ -141,10 +141,9 @@ function MyDatabase(config){
 
   this.stop = function(){
     isRunning(true);
-    console.log('the database has stopped.');
     return updateStatsToDB()
       .then(function(){
-        console.log('The Database has been stopped...');
+        console.log('\nThe Database has been stopped.\n');
         if(updateStatsInterval) clearInterval(updateStatsInterval);
         state = 'STOPPED';
       });
