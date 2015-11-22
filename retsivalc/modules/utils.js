@@ -134,7 +134,26 @@ function formArgumentConfig(){
   return config;
 };
 
+// setting a callback when user tries to shutdown the application
+function setGracefulExitFn(fn){
+
+  // patch for wiindows machines which do not emit the SIGINT 
+  if (process.platform === "win32") {
+    var rl = require("readline").createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
+    rl.on("SIGINT", function () {
+      process.emit("SIGINT");
+    });
+  }
+
+  process.on("SIGINT", fn);
+}
+
 
 module.exports ={
-  formArgumentConfig
+  formArgumentConfig : formArgumentConfig,
+  setGracefulExitFn : setGracefulExitFn
 }

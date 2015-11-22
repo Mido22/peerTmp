@@ -4,7 +4,8 @@
   "description": "syslog storage server",
   "main": "app.js",
   "scripts": {
-    "test": "soon"
+    "test": "soon",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -13,6 +14,7 @@
   "author": "Mido",
   "license": "MIT",
   "dependencies": {
+    "es6-promise": "^3.0.2",
     "nedb": "^1.4.0"
   }
 }
