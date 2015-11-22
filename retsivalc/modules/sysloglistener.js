@@ -1,13 +1,23 @@
 var dgram = require("dgram")
-  , messagePattern=/^\<(\w+)\>\[(.*)\] EFW: (\w+): prio\=(\d+) id=(\d+) rev\=(\d+) event\=(\w+) (.*)$/
-  , actionPattern = /^action\=(\w+) (.*)$/
+  , messagePattern=/^\<(\w+)\>\[(.*)\] EFW: (\w+): prio\=(\d+) id=(\d+) rev\=(\d+) event\=(\w+) (.*)$/ // regex for parsing the incoming message to the RFC5424 format
+  , actionPattern = /^action\=(\w+) (.*)$/  // regex for extracting the action prop if present
 ;
 
 
+/**
+ * SysLog listener( a wrapper class for UDP socket listener)
+ * port {Number}  - UDP socket to listen to.
+ * database {Number} - database instance to dump data to.
+ * @return {SyslogListener} - instance of the class
+ */
 function SyslogListener(port, database){
 
   var socket = dgram.createSocket("udp4");
 
+  /**
+   * to start listening to the UDP socket
+   * @return {Promise} - resolves to no value.
+   */
   this.start = function(){
     return new Promise(function(resolve, reject){
       var promiseResolved = false;
@@ -24,14 +34,14 @@ function SyslogListener(port, database){
       socket.on('message', function(buffer, rinfo){
         var result = parseMessage(buffer);
         result.ip = rinfo.address;
-        database.insert(result).catch(console.error.bind(console));
+        database.insert(result).catch(console.error.bind(console)); // pass the incoming message to be stored to the database.
       });
     });
   };
 
 }
 
-// for transforming the input buffer into the 
+// for transforming the input buffer into the log object that can be stored in database, returns the log object.
 function parseMessage(buffer){
   var result={malformed:true}
     , actionMatch

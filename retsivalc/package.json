@@ -11,7 +11,7 @@
     "type": "git",
     "url": "N.A"
   },
-  "author": "Mido",
+  "author": "Varun S",
   "license": "MIT",
   "dependencies": {
     "es6-promise": "^3.0.2",

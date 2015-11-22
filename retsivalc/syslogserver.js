@@ -2,14 +2,20 @@
 var SyslogListener = require('./modules/sysloglistener')
   , Database = require('./modules/database')
   , ApiServer = require('./modules/apiServer')
-  , logListener
-  , db
-  , restListener
-  , apiServer
-  , dbFileLocation = './logdb.json'
+  , logListener   // syslog listener instance
+  , db            // database instance
+  , apiServer     // rest server instance
+  , dbFileLocation = './logdb.json' // location of the database file
 ;
 
 
+/**
+ * for starting the application
+ * syslogPort {Number}  - UDP port for listening to syslog messages.
+ * restPort {Number} - port in for running REST API server
+ * callback {Function} - function to be called after the start of the application.
+ * @return {void}
+ */
 function start(syslogPort, restPort, callback){
 
   if(!syslogPort || !restPort)  return callback("Missing Parameters in syslogserver.start() method");
@@ -28,6 +34,11 @@ function start(syslogPort, restPort, callback){
 }
 
 
+/**
+ * for shutting down the application
+ * callback {Function} - function to be called after the stopping the application.
+ * @return {void}
+ */
 function stop(callback){
   db.stop()
     .then(callback)     // success callback

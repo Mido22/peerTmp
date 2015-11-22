@@ -6,23 +6,28 @@ var Path = require('path')
   , sysLogger
 ;
 
-commandLineArgs = formArguments();
+commandLineArgs = formArguments();  // parse the port detaills fed as commandline arguments
 sysLogger = require('./syslogserver');
 
+// Set Handler for application exit request( Ctrl-C).
 setGracefulExitFn(sysLogger.stop.bind(sysLogger, onApplicationEnd));
+// Start Application
 sysLogger.start(commandLineArgs.syslogPort, commandLineArgs.restPort, onApplicationStart);
 
+// callback after application start
 function onApplicationStart(err){
   if(err) return onFatalError(err);
   console.log('The application has started, accepting log in port %s and REST API is listening in port %s ...', commandLineArgs.syslogPort, commandLineArgs.restPort);
 }
 
+// callback after application has been stopped.
 function onApplicationEnd(err){
   if(err) return onFatalError(err);
   console.log('The application has stopped.');
   process.exit(0);
 }
 
+// fatal error handler
 function onFatalError(err){
   console.error('Fatal Error', err, '\n closing application');
   process.exit(1);
