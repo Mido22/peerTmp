@@ -1,26 +1,25 @@
 
-'use strict';
-
 var Path = require('path')
   , Util = require('util')
+  , filterPrameterArray = ['num', 'startDate', 'endDate', 'ip', 'event', 'action', 'cat']
 ;
 
 // Parse arguments and build config
-function formArgumentConfig(){
+function formArguments(){
 
   var arg, flag, param, option, config = {}
     ,  argumentDefines = {
     's': {
       desc: 'Port that is used to receive syslog messages. (Mandatory)',
-      param: 'dest port',
-      prop: 'receivePort',
+      param: 'syslog port',
+      prop: 'syslogPort',
       type: 'number',
       mandatory: true
     },
     'r': {
       desc: 'Port that is used to access the REST API. (Mandatory)',
-      param: 'send port',
-      prop: 'sendPort',
+      param: 'rest port',
+      prop: 'restPort',
       type: 'number',
       mandatory: true
     }
@@ -152,8 +151,29 @@ function setGracefulExitFn(fn){
   process.on("SIGINT", fn);
 }
 
+// 
+
+function parseQueryParams(paramStr){
+
+  var query = {};
+  paramStr.split('&').forEach(function(str){
+    str = str.split['='];        
+    if(filterPrameterArray.indexOf(str[0]) > -1)
+      query[str[0]] = str[1].toUpperCase();
+  });
+  query.num = parseInt(query.num, 10) || 20;  // default result count
+  if(query.startDate && query.endDate && !isNaN(Date.parse(query.startDate)) && !isNaN(Date.parse(query.endDate))){
+    query.createdAt = {};
+    query.createdAt.$lte = new Date(query.startDate);
+    query.createdAt.$gte = new Date(query.endDate);
+  }    
+  delete query.startDate;
+  delete query.endDate;
+  return query;
+}
 
 module.exports ={
-  formArgumentConfig : formArgumentConfig,
-  setGracefulExitFn : setGracefulExitFn
+  formArguments : formArguments,
+  setGracefulExitFn : setGracefulExitFn,
+  parseQueryParams: parseQueryParams
 }
