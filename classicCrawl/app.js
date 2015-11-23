@@ -1,7 +1,7 @@
 var Crawler = require("crawler")
   , Datastore = require('nedb')
   , host ='https://en.wikipedia.org'
-  , maxLevel = 5
+  , maxLevel = 13
   , dbFile = './db.json'
   , db = new Datastore({filename: dbFile})
   , crawler
@@ -37,9 +37,9 @@ function enQueue(link, level){
       pageCount+=1;
       console.log('pageCount: ', pageCount);
       level = level+1;
-      $(a).each((i, v)=>{
+      $('a').each((i, v)=>{
         switch(classifyLink(v.attribs.href)){
-          case 'file': insert(v.attribs.href, v.attribs.name);break;
+          case 'file': insert(v.attribs.href, v.attribs.title);break;
           case 'next': enQueue(v.attribs.href, level);break;
           case 'fileLink': enQueueFileLink(v.attribs.href);break;
           default: break;
@@ -55,7 +55,7 @@ function enQueueFileLink(link){
     callback: (err, res, $)=>{
       pageCount+=1;
       console.log('pageCount: ', pageCount);
-      $(a).each((i, v)=>{
+      $('a').each((i, v)=>{
         if(classifyLink(v.attribs.href)==='file')  insert(v.attribs.href, v.attribs.name);
       });
     }
