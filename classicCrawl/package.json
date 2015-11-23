@@ -1,0 +1,14 @@
+{
+  "name": "classic-crawl",
+  "version": "1.0.0",
+  "description": "Test Wiki Crawler",
+  "main": "app.js",
+  "scripts": {
+    "test": "soon"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "crawler": "^0.4.3"
+  }
+}
