@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "crawler": "^0.4.3"
+    "crawler": "^0.4.3",
+    "nedb": "^1.4.0"
   }
 }
