@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  div(ng-app='theModule' ng-controller='mainCtrl')
+    div.indexPage(main-page ng-show='show === "index"')
+
+block customScripts
+  script.
+    console.log('hello');
