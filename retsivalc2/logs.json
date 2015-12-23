@@ -1,0 +1,46 @@
+[
+ {
+  "time": "2015-08-28T11:49:24Z",
+  "ip": "192.168.96.1",
+  "prio": 3,
+  "cat": "IP_PROTO",
+  "event": "hop_limit_low",
+  "message": "Aug 28 12:01:27 192.168.96.1 [2015-08-28 11:49:24] EFW: IP_PROTO: prio=3 id=07000060 rev=1 event=hop_limit_low action=drop hoplimit=1 hoplimitmin=3 rule=HopLimitOnLowMulticast recvif=If1 srcip=fe80::6978:b8a1:945b:6cde destip=ff02::c",
+  "action": "drop"
+ },
+ {
+  "time": "2015-08-28T11:49:24Z",
+  "ip": "192.168.96.1",
+  "prio": 3,
+  "cat": "RULE",
+  "event": "ruleset_drop_packet",
+  "message": "Aug 28 12:01:26 192.168.96.1 [2015-08-28 11:49:24] EFW: RULE: prio=3 id=06000051 rev=1 event=ruleset_drop_packet action=drop rule=Default_Rule recvif=If1 srcip=192.168.103.15 destip=10.10.103.1 ipproto=UDP ipdatalen=104 srcport=49917 destport=999 udptotlen=104",
+  "action": "drop"
+ },
+ {
+  "time": "2015-08-28T11:49:24Z",
+  "ip": "192.168.96.1",
+  "prio": 3,
+  "cat": "IPV6_ND",
+  "event": "invalid_nd_sender_ip_address",
+  "message": "Aug 28 12:01:27 192.168.96.1 [2015-08-28 11:49:24] EFW: IPV6_ND: prio=3 id=06400049 rev=1 event=invalid_nd_sender_ip_address action=drop rule=Default_Access_Rule recvif=If1 srcip=2001:470:28:4be:1::300 destip=ff02::1:ff00:1 ipproto=IPv6-ICMP ipdatalen=32 icmptype=ND_NEIGHBORSOLICITATION icmpcode=0",
+  "action": "drop"
+ },
+ {
+  "time": "2015-08-28T11:49:23Z",
+  "ip": "192.168.96.1",
+  "prio": 1,
+  "cat": "APPCONTROL",
+  "event": "application_end",
+  "message": "Aug 28 12:01:26 192.168.96.1 [2015-08-28 11:49:23] EFW: APPCONTROL: prio=1 id=07200003 rev=2 event=application_end connipproto=UDP connrecvif=If1 connsrcip=192.168.103.9 connsrcport=37415 conndestif=If3 conndestip=8.8.4.4 conndestport=53 application=dns origsent=61 termsent=0"
+ },
+ {
+  "time": "2015-08-28T11:49:23Z",
+  "ip": "192.168.96.1",
+  "prio": 3,
+  "cat": "IPV6_ND",
+  "event": "invalid_nd_sender_ip_address",
+  "message": "Aug 28 12:01:26 192.168.96.1 [2015-08-28 11:49:23] EFW: IPV6_ND: prio=3 id=06400049 rev=1 event=invalid_nd_sender_ip_address action=drop rule=Default_Access_Rule recvif=If1 srcip=2001:470:28:4be:1::300 destip=ff02::1:ff00:1 ipproto=IPv6-ICMP ipdatalen=32 icmptype=ND_NEIGHBORSOLICITATION icmpcode=0",
+  "action": "drop"
+ }
+]
