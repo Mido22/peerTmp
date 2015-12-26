@@ -1,0 +1,43 @@
+.page-wrap {
+  width: 90%;
+  max-width: 960px;
+  margin: 0px auto;
+  position: relative;
+}
+
+.flex-row{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+}
+
+
+/* for Modify Log Soources Modal*/
+
+.log-sources .add-div{
+  @extend .flex-row;
+  justify-content: space-around;
+  margin-bottom: 25px;
+}
+
+
+.log-sources .list-div li{
+  @extend .flex-row;
+  width: 90%;
+  margin: auto;
+  margin-bottom: 5px;
+  span{
+    flex-grow: 1;
+  }
+
+  button{
+    align-self: flex-end;
+  }
+}
+
+/* for Modify Log Soources Modal*/
+
+
+
+/*# sourceMappingURL=style.css.map */

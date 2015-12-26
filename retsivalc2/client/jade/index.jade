@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  div(ng-app='theModule' ng-controller='mainCtrl')
+    div.alerts
+      uib-alert(ng-repeat='alert in alerts' type='{{alert.type}}' close='closeAlert($index)')  {{alert.msg}}
+      button.close-btn.btn.btn-default(type='button' ng-click='clearAlerts()' ng-show='alerts.length') clear
+
+    div.log-sources-area
+      button.btn.btn-default.pull-left(type='button' ng-click='editLogSources()') Log Sources
+      
+    div.query-area
+
