@@ -2,13 +2,15 @@ doctype html
 html
   head
     title= title
-    meta(charset="utf-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1")
-    meta(name='keywords', content='')
-    link(type="text/css", rel="stylesheet", href="/components-bootstrap/css/bootstrap.min.css")
-    link(type="text/css", rel="stylesheet", href="/components-bootstrap/css/bootstrap-theme.min.css")
-    link(type="text/css", rel='stylesheet', href='/css/normalize.css')
-    link(type="text/css", rel='stylesheet', href='/css/style.css')
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width initial-scale=1')
+    meta(name='keywords' content='')
+    link(type='text/css' rel='stylesheet' href='/components-bootstrap/css/bootstrap.min.css')
+    link(type='text/css' rel='stylesheet' href='/components-bootstrap/css/bootstrap-theme.min.css')
+    link(type='text/css' rel='stylesheet' href='/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css')
+    link(type='text/css' rel='stylesheet' href='/ng-table/dist/ng-table.min.css')
+    link(type='text/css' rel='stylesheet' href='/css/normalize.css')
+    link(type='text/css' rel='stylesheet' href='/css/style.css')
     block css
 
   body
@@ -19,8 +21,11 @@ html
       
       block scripts
         script(src='/jquery/dist/jquery.min.js')
+        script(src='/moment/min/moment.min.js')
         script(src='/components-bootstrap/js/bootstrap.min.js')
+        script(src='/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js')
         script(src='/angular/angular.min.js')
         script(src='/angular-bootstrap/ui-bootstrap-tpls.min.js')
+        script(src='/ng-table/dist/ng-table.min.js')
         script(src='/app.js')
     

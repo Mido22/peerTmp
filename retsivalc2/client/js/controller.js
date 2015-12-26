@@ -11,6 +11,13 @@ theModule.controller('mainCtrl', [
     $scope.query = new Query();
     $scope.sources = new LogSources();
     $scope.sources.addObserver(onLogSourcesChange);
+    $scope.data = [];
+    for(let i=0;i<100;i++){
+      $scope.data.push({
+        name: 'name_' + Math.round(Math.random()*1000),
+        age: Math.round(Math.random()*100)
+      });
+    }
   }
 
   function onLogSourcesChange({missing, added}){
@@ -20,7 +27,12 @@ theModule.controller('mainCtrl', [
   $scope.addAlert = (msg, type) => $scope.alerts.push({msg, type});
   $scope.closeAlert = index => $scope.alerts.splice(index, 1);
   $scope.clearAlerts = () => $scope.alerts = [];
-  
+  $scope.resetQuery = () => {
+    $scope.query = new Query();
+    angular.element('.date input').each((index, element) => element.data('DateTimePicker').date(null));   // for resetting all the Date Fields
+  };
+  $scope.updateUI = updateUI;
+
   $scope.editLogSources = () => {
 
     var modalInstance = $uibModal.open({
@@ -57,7 +69,7 @@ theModule.controller('logSourcesModal', [
   ($scope, $uibModalInstance, sources) => {
 
   $scope.sources = sources;
-  $scope.url = 'localhost';
+  $scope.url = 'http://localhost';
   $scope.port = 4000;
 
   $scope.ok = () => $uibModalInstance.close($scope.sources);
@@ -79,7 +91,12 @@ theModule.controller('logSourcesModal', [
     }else {
       domain = url.split('/')[0];
     }
+    if(domain.indexOf(':')>-1){
+      port = domain.split(':')[1];
+      domain= domain.split(':')[0];
+    }
     return `${protocol}://${domain}:${port}`;    
   }
 
 }]);
+

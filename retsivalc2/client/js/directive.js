@@ -1,15 +1,20 @@
 
-theModule.directive('angTestDir', [() => {
+theModule.directive('myDatePicker',[() => {
 
-
-
-  function link(scope, element, attrs) {  
-    console.log('hit directive...');
-  }  
-
-  return { 
-    scope: false,
-    link,
-    templateUrl: `${partialsSourceDir}angTestDir.html`
-  };  
+  return {
+    require: '?ngModel',
+    link: (scope, element, attrs, ngModelCtrl) => {
+      element.datetimepicker({
+        sideBySide: true,
+        format:'YYYY-MM-DDTHH:mm:ss'
+      }).on('dp.change', function(e){
+        ngModelCtrl.$setViewValue(element.data().date);
+        scope.updateUI();
+      }).data('DateTimePicker')
+      .maxDate(new Date())
+      .showClear(true)
+      .showTodayButton(true)
+      .showClose(true);
+    }
+  };
 }]);

@@ -1,6 +1,5 @@
 .page-wrap {
-  width: 90%;
-  max-width: 960px;
+  width: 95%;
   margin: 0px auto;
   position: relative;
 }
@@ -12,8 +11,40 @@
   align-items: center;
 }
 
+/*for index page*/
 
-/* for Modify Log Soources Modal*/
+.log-sources-area{
+  margin: 40px;
+}
+
+.query-area{
+  @extend .flex-row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+  .item{
+    margin: 0 5px;
+  }
+
+  .input-group-addon{
+    width: 40px;
+    left: -40px;
+    position: relative;
+    z-index: -1;
+  }
+
+  .input-group.date input{
+    height: 31px;
+    background: none;
+    width:200px;
+  }
+
+}
+
+/*for index page*/
+
+
+/* for Modify Log Sources Modal*/
 
 .log-sources .add-div{
   @extend .flex-row;
@@ -36,7 +67,7 @@
   }
 }
 
-/* for Modify Log Soources Modal*/
+/* for Modify Log Sources Modal*/
 
 
 

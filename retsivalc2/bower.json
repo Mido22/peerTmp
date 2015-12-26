@@ -1,0 +1,13 @@
+{
+  "name": "clavister-front-end-assignment",
+  "version": "0.0.1",
+  "ignore": [],
+  "dependencies": {
+    "angular": "~1.4.8",
+    "components-bootstrap": "~3.3.6",
+    "jquery": "~2.1.4",
+    "angular-bootstrap": "~0.14.3",
+    "eonasdan-bootstrap-datetimepicker": "~4.17.37",
+    "ng-table": "~0.8.3"
+  }
+}
