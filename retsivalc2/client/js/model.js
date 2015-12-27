@@ -45,18 +45,18 @@ class Query extends Observable{
     this.prio = '';
   }
 
-  get(){
-    var attrs = ['num', 'startTime', 'endTime', 'ip', 'cat', 'event', 'action', 'prio'], query, attrPairs =[];
+  params(){
+    var attrs = ['num', 'startTime', 'endTime', 'ip', 'cat', 'event', 'action', 'prio'], queryParams={};
 
     attrs.filter(key => this[key] && (''+this[key]).trim().length)
          .forEach(attr => {
             if(['startTime', 'endTime'].indexOf(attr) > -1){
-                attrPairs.push([attr, this[attr].indexOf('Z')>-1 ? this[attr] : this[attr]+'Z']);  // adding 'Z' in end if Date Format is missing it.
+                queryParams[attr] = this[attr].indexOf('Z')>-1 ? this[attr] : this[attr]+'Z';  // adding 'Z' in end if Date Format is missing it.
             }else{
-              attrPairs.push([attr, this[attr]]);
+              queryParams[attr] = this[attr];
             }
          });
-    return '/log?' + attrPairs.map(pair => pair.join('=')).join('&');
+    return queryParams;
   }
 }
 
@@ -68,6 +68,10 @@ class LogSources extends Observable{
 
   list(){
     return Array.from(this.sources);
+  }
+
+  has(source){
+    return this.sources.has(source);
   }
 
   updateSources(newSources){

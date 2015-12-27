@@ -1,37 +1,51 @@
 
 theModule.controller('mainCtrl', [
-  '$scope', '$timeout', 'prioList', '$uibModal', 
-  ($scope, $timeout, prioList, $uibModal) => {
+  '$scope', '$timeout', '$uibModal', '$filter', '$q', 'NgTableParams', 'appConstants', 'fetchLogs',
+  ($scope, $timeout, $uibModal, $filter, $q, NgTableParams, appConstants, fetchLogs) => {
+  
 
   function init(){
-    window.s = $scope; // for Debug, REMOVE it.
-    s.updateUI = updateUI;
     $scope.alerts = [];   
-    $scope.prioList = prioList;
+    $scope.prioList = appConstants.prioList;
     $scope.query = new Query();
     $scope.sources = new LogSources();
     $scope.sources.addObserver(onLogSourcesChange);
-    $scope.data = [];
-    for(let i=0;i<100;i++){
-      $scope.data.push({
-        name: 'name_' + Math.round(Math.random()*1000),
-        age: Math.round(Math.random()*100)
-      });
-    }
+    $scope.logs = [];
+    $scope.tableCols = appConstants.tableColumns;
+    var options = appConstants.tableOptions;
+    options.getData = ($defer, params) => {
+      var data, startIdx, endIdx;
+      $scope.logs = $filter('orderBy')($scope.logs, params.orderBy());
+      params.total($scope.logs.length);
+      startIdx = (params.page()-1)*params.count();
+      endIdx = params.page()*params.count();
+      data = $scope.logs.slice(startIdx, endIdx);
+      return data;
+    };
+    $scope.dataTable = new NgTableParams(appConstants.tableInitConfig, options);
   }
 
   function onLogSourcesChange({missing, added}){
-    console.log('log sources updated: ', missing, added);
+    if(missing && missing.length){
+      $scope.logs = $scope.logs.filter(log => missing.indexOf(log.source)<-1);
+      $scope.dataTable.reload();
+    }
+
+    if(added && added.length){
+      getLogs(added, _updateId);
+    }
+
   }
 
   $scope.addAlert = (msg, type) => $scope.alerts.push({msg, type});
   $scope.closeAlert = index => $scope.alerts.splice(index, 1);
   $scope.clearAlerts = () => $scope.alerts = [];
+  $scope.updateUI = updateUI;
+
   $scope.resetQuery = () => {
     $scope.query = new Query();
     angular.element('.date input').each((index, element) => element.data('DateTimePicker').date(null));   // for resetting all the Date Fields
   };
-  $scope.updateUI = updateUI;
 
   $scope.editLogSources = () => {
 
@@ -47,9 +61,34 @@ theModule.controller('mainCtrl', [
     modalInstance.result.then( newSources => $scope.sources.updateSources(newSources), () => {});
   }
 
+  var _updateId=0;
+  $scope.search = () => {
+    var sources = $scope.sources.list().slice(0); // make a shallow copy
+    if(!sources.length) return;
+    _updateId++;
+    $scope.logs=[];
+    getLogs(sources, _updateId);
+  }
+
+  function getLogs(sources, updateId){
+    $scope.loadingLogs = true;
+    var promises = fetchLogs(sources, $scope.query.params())
+      .map((promise, index) => promise
+        .then(data => {
+          // return if this result for previous update or the log source is removed from watch list.
+          if(updateId!=_updateId || !$scope.sources.has(sources[index])) return;
+          $scope.logs.push.apply($scope.logs, data);
+          $scope.dataTable.reload();
+        }).catch(e => $scope.addAlert('Error Retriving Log from '+sources[index], 'danger'))
+      );
+    $q.all(promises).then(()=>{
+      if(updateId!=_updateId) return; // not the latest getLogs request
+      $scope.loadingLogs = false;
+    });
+  }
 
 
-  // For triggering DOM update.
+  // For manually triggering DOM update.
   function updateUI(){ 
     var phase = $scope.$root.$$phase;
     if(phase !== '$apply' && phase !== '$digest') {

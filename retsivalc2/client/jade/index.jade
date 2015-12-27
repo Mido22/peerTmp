@@ -12,21 +12,22 @@ block content
 
     div.query-area
       div.item
-        span Start Time:
+        button.btn.btn-warning(ng-click='resetQuery()') Reset fields
+      div.item
         div.input-group.date
           input(type='text' ng-model='query.startTime' data-my-date-picker)
           span.input-group-addon
             span.glyphicon.glyphicon-calendar
+      div.item to
       div.item
-        span End Time:
         div.input-group.date
           input(type='text' ng-model='query.endTime' data-my-date-picker)
           span.input-group-addon
             span.glyphicon.glyphicon-calendar
       div.item
-        span Log severity:
+        span Severity:
         select(ng-model='query.prio')
-          option(ng-repeat='item in prioList' ng-bind='item' ng-value='item' ng-selected='query.prio==item')
+          option(ng-repeat='(key, val) in prioList' ng-bind='val' ng-value='key')
       div.item
         span Category:
         input(type='text' ng-model='query.cat')
@@ -40,16 +41,14 @@ block content
         span Origin IP:
         input(type='text' ng-model='query.ip')
       div.item
-        span Max Fetch Count( per source)
+        span Max Fetch Count( per source):
         input(type='number' min=0 ng-model='query.num')
-      div.item.right
+      div.item
         button.btn.btn-primary(ng-click='search()') Search
-      div.item.right
-        button.btn.btn-warning(ng-click='resetQuery()') Reset fields
     
-    div.table-area
-      table.table(ng-table='vm.tableParams' show-filters='true')
-        tr(ng-repeat='datum in data')
-          td(title="'Name'" sortable="'name'")  {{datum.name}}
-          td(title="'Age'" sortable="'age'")  {{datum.age}}
+    div.table-area(ng-show='logs.length')
+      h3 Logs
+      table.table.table-bordered.table-striped(ng-table-dynamic='dataTable with tableCols' show-filters='true')
+        tr(ng-repeat='row in $data')
+          td(ng-repeat='col in $columns' ng-bind='row[col.field]')  
 
