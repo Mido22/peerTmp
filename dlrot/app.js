@@ -119,3 +119,68 @@ function deleteFolderRecursive(path) {
     }
     fs.mkdirSync(path);
 };
+
+
+
+
+function getData(url){
+  return new Promise(function(resolve, reject){
+    var request = new XMLHttpRequest();
+    request.open('GET', url, true);
+    request.onload = function() {
+      if (request.status >= 200 && request.status < 400) {
+        resolve(request.responseText);
+      } else {
+        reject("Some error occured, status code: ", request.status);
+      }
+    };
+    request.onerror = reject;
+    request.send();
+  });
+}
+
+var url = 'https://gist.githubusercontent.com/brianw/19896c50afa89ad4dec3/raw/6c11047887a03483c50017c1d451667fd62a53ca/gistfile1.txt', 
+  myLocation = {
+    latitude: '53.3381985',
+    longitude: '-6.2592576'
+  }
+
+function getDistance(point1, point2){
+
+  const EarthRadius = 6371; // in kilometers.
+
+  function toRadians(degrees){
+    return degrees * Math.PI / 180;
+  }
+  
+  let lat1 = toRadians(+point1.latitude),
+    lat2 = toRadians(+point2.latitude),
+    lon1 = toRadians(+point1.longitude),
+    lon2 = toRadians(+point2.longitude),
+    cos = Math.cos,
+    sin = Math.sin,
+    pow = Math.pow,
+    abs = Math.abs,
+    sqrt = Math.sqrt,
+    aLon = abs(lon1 - lon2),
+    aLat = abs(lat1 - lat2),
+    angle,
+    centralAngle;
+
+  if( isNaN(lat1) || isNaN(lat2) || isNaN(lon1) || isNaN(lon2) )
+    throw new Error('Invalid Data Present');
+
+  angle = sin(aLat/2)*sin(aLat/2)
+           + cos(lat2)*cos(lat2)*sin(aLon/2)*sin(aLon/2);
+  centralAngle = 2 * Math.atan2(Math.sqrt(angle), Math.sqrt(1-angle));
+  console.log('got Distance: ', EarthRadius * centralAngle);
+  return EarthRadius * centralAngle;  
+}
+
+getData(url)
+  .then(data => '['+data.replace(/\n/g, ',')+']')
+  .then(JSON.parse)
+  .then(data => data.filter(record => getDistance(record, myLocation) < 100))
+  .then(d => d.sort((a, b) => a.user_id > b.user_id))
+  .then(d => console.log('customer data: ', d))
+  .catch(console.error.bind(console));
